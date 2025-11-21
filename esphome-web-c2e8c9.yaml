@@ -1,0 +1,63 @@
+esphome:
+  name: esphome-web-c2e8c9
+  friendly_name: Sonoff Basic R2 (1)
+  min_version: 2024.11.0
+  name_add_mac_suffix: false
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+# Allow Over-The-Air updates
+ota:
+- platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+# Device Specific Config
+binary_sensor:
+  - platform: gpio
+    id: push_button
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: True
+    internal: true
+    on_press:
+      # Prevents unintended LED lit states.
+      if:
+        condition:
+          - switch.is_off: relay
+        then:
+          - light.turn_on: blue_led
+          - switch.turn_on: relay
+        else:
+          - switch.turn_off: relay
+
+light:
+  - platform: status_led
+    id: blue_led
+    internal: True
+    pin:
+      number: GPIO13
+      inverted: True
+
+switch:
+  # The relay switches on the red side of the LED when active.
+  - platform: gpio
+    name: "Sonoff Basic Relay"
+    pin: GPIO12
+    id: relay
+    on_turn_off:
+      if:
+        condition:
+          - light.is_on: blue_led
+        then:
+          - light.turn_off: blue_led

@@ -1,0 +1,45 @@
+esphome:
+  name: test123
+  friendly_name: Test123
+#  on_boot:
+#    - priority: 100
+#      then:
+#        - lambda: |-
+#            pinMode(D8, OUTPUT);
+#            digitalWrite(D8, HIGH);
+
+esp8266:
+  board: d1_mini_pro
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "tglMKdeBDXqsWc8BdRjHc5ZhQpu/w/PrwV4/Cf6G+Is="
+
+ota:
+  - platform: esphome
+    password: "eb9bb9f0bd9164d6980fce3d019cf99a"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Test123 Fallback Hotspot"
+    password: "v8BM8NZfqwC8"
+
+captive_portal:
+
+web_server:
+
+switch:
+  - platform: gpio
+    name: test123_switch
+    icon: "mdi:lightbulb_outline"
+    pin: D7
+    id: relay_1
+    restore_mode: restore_default_off

@@ -1,0 +1,236 @@
+# -----------------------------------------------------------------------------
+# Substitution Variables
+# -----------------------------------------------------------------------------
+substitutions:
+  device_internal_name: wemosbirdcage
+  device_friendly_name: WemosBirdCage
+  device_wifi_name: WemosBirdCage
+  device_sampling_time: 30s
+  transition_length: 900s
+
+# -----------------------------------------------------------------------------
+# Common Packages
+# -----------------------------------------------------------------------------
+packages:
+  # ---------------------------------------------------------------------------
+  # Board
+  # ---------------------------------------------------------------------------
+  board: !include boards/esp8266/d1_mini.yaml
+  settings: !include common/core/settings.yaml
+
+  # ---------------------------------------------------------------------------
+  # Network
+  # ---------------------------------------------------------------------------
+  wifi: !include common/network/wifi.yaml
+  webserver: !include
+    file: common/network/webserver.yaml
+    vars:
+      version: 3
+
+# -----------------------------------------------------------------------------
+# Custom Device Configuration
+# -----------------------------------------------------------------------------
+status_led: !remove
+i2c: !remove
+uart: !remove
+spi: !remove
+
+# -----------------------------------------------------------------------------
+# Output
+# -----------------------------------------------------------------------------
+output:
+  - platform: esp8266_pwm
+    pin: D1
+    frequency: 100 Hz
+    id: light_left_output
+  - platform: esp8266_pwm
+    pin: D2
+    frequency: 100 Hz
+    id: light_middle_output
+  - platform: esp8266_pwm
+    pin: D3
+    frequency: 100 Hz
+    id: light_right_output
+
+# -----------------------------------------------------------------------------
+# Sensors
+# -----------------------------------------------------------------------------
+sensor:
+  - platform: dht
+    pin: D4
+    temperature:
+      name: "${device_friendly_name} Temperature"
+    humidity:
+      name: "${device_friendly_name} Humidity"
+    update_interval: 60s
+
+# text_sensor:
+#   - platform: template
+#     name: "Template Text Sensor"
+#     lambda: |-
+#       return to_string (id(light_left).current_values.get_brightness());
+#     update_interval: 1s
+
+# -----------------------------------------------------------------------------
+# Binary Sensors
+# -----------------------------------------------------------------------------
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: D6
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    name: "${device_friendly_name} Light On"
+    id: green_button
+    device_class: light
+    on_press:
+      - script.execute: turn_on_lights
+
+  - platform: gpio
+    pin:
+      number: D7
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    name: "${device_friendly_name} Light Dim"
+    id: white_button
+    device_class: light
+    on_press:
+      - script.execute: dim_lights
+
+  - platform: gpio
+    pin:
+      number: D8
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    name: "${device_friendly_name} Light Off"
+    id: red_button
+    on_press:
+      - script.execute: turn_off_lights
+
+# -----------------------------------------------------------------------------
+# Switchs
+# -----------------------------------------------------------------------------
+switch:
+  - platform: gpio
+    pin: D0
+    name: "${device_friendly_name} Relay 1"
+    id: relay1
+    inverted: true
+    internal: true
+  - platform: gpio
+    pin: D5
+    name: "${device_friendly_name} Relay 2"
+    id: relay2
+    inverted: true
+    internal: true
+
+# -----------------------------------------------------------------------------
+# Lights
+# -----------------------------------------------------------------------------
+light:
+  - platform: monochromatic
+    output: light_left_output
+    name: "${device_friendly_name} Light Left"
+    id: light_left
+    on_turn_on:
+      then:
+        - switch.turn_on: relay1
+        - switch.turn_on: relay2
+  - platform: monochromatic
+    output: light_middle_output
+    name: "${device_friendly_name} Light Middle"
+    id: light_middle
+    on_turn_on:
+      then:
+        - switch.turn_on: relay1
+        - switch.turn_on: relay2
+  - platform: monochromatic
+    output: light_right_output
+    name: "${device_friendly_name} Light Right"
+    id: light_right
+    on_turn_on:
+      then:
+        - switch.turn_on: relay1
+        - switch.turn_on: relay2
+
+# -----------------------------------------------------------------------------
+# Scripts
+# -----------------------------------------------------------------------------
+script:
+  - id: turn_on_lights
+    then:
+      - script.stop: turn_off_lights
+      - script.stop: dim_lights
+      - light.turn_on:
+          id: light_left
+          brightness: 100%
+      - light.turn_on:
+          id: light_middle
+          brightness: 100%
+      - light.turn_on:
+          id: light_right
+          brightness: 100%
+
+  - id: turn_off_lights
+    then:
+      - script.stop: turn_on_lights
+      - script.stop: dim_lights
+      - light.turn_off:
+          id: light_left
+      - light.turn_off:
+          id: light_middle
+      - light.turn_off:
+          id: light_right
+      - delay: 5s
+      - switch.turn_off: relay1
+      - switch.turn_off: relay2
+
+  - id: dim_lights
+    then:
+      - script.stop: turn_off_lights
+      - script.stop: turn_on_lights
+      - light.turn_on:
+          id: light_left
+          brightness: 25%
+      - light.turn_on:
+          id: light_right
+          brightness: 25%
+      - light.turn_on:
+          id: light_middle
+          brightness: 100%
+          transition_length: 0s
+      - delay: 2s
+      - light.turn_off:
+          id: light_middle
+          transition_length: 0s
+      - delay: 2s
+      - light.turn_on:
+          id: light_middle
+          transition_length: 0s
+      - delay: 2s
+      - light.turn_off:
+          id: light_middle
+          transition_length: 0s
+      - light.turn_on:
+          id: light_left
+          brightness: 100%
+      - light.turn_on:
+          id: light_right
+          brightness: 100%
+      - delay: 2s
+      - light.turn_off:
+          id: light_left
+          transition_length: ${transition_length}
+      - light.turn_off:
+          id: light_right
+          transition_length: ${transition_length}
+      - delay: ${transition_length}
+      - delay: 2s
+      - switch.turn_off: relay1
+      - switch.turn_off: relay2

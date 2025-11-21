@@ -1,0 +1,234 @@
+substitutions:
+  device_name: "SprinklersGrootKot"
+  device_id: "sprinklersgrootkot"
+  run_duration: 60s
+  valve_change_duration: 28s
+
+esphome:
+  name: ${device_id}
+  friendly_name: ${device_name}
+
+  on_boot:
+    - priority: 1000
+      then:
+        - lambda: |-
+            pinMode(D8, OUTPUT);
+            digitalWrite(D8, HIGH);
+
+esp8266:
+  board: d1_mini
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "I0KgRnXZboInMU8AheDSUA07lNH/j7OnLFtR2FC27xk="
+
+ota:
+  - platform: esphome
+    password: "3d9ab6ea1985e741b690a23e74c59c5e"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "SGK Fallback Hotspot"
+    password: "c2UjHrycGucf"
+
+captive_portal:
+
+web_server:
+  port: 80
+
+i2c:
+  sda: GPIO4
+  scl: GPIO5
+
+mcp23017:
+  - id: 'mcp23017_hub'
+    address: 0x20
+
+sprinkler:
+  - id: lawn_sprinkler_ctrlr
+    main_switch: "GrootKot Sprinklers"
+    auto_advance_switch: "GrootKot Sprinklers Auto Advance"
+    reverse_switch: "GrootKot Sprinklers Reverse"
+    valve_open_delay: 5s
+    valve_pulse_duration: ${valve_change_duration}  
+    valves:
+      - valve_switch: "Vogelkooi Lawn"
+        enable_switch: "Enable Vogelkooi Lawn"
+        run_duration_number:
+          id: run_duration_vogelkooi
+          name: "Duurtijd Vogelkooi"
+          icon: "mdi:timer-outline"
+          initial_value: 30
+          min_value: 5
+          max_value: 90
+          unit_of_measurement: min
+        valve_on_switch_id: relay1
+        valve_off_switch_id: relay2
+      - valve_switch: "Haag Lawn"
+        enable_switch: "Enable Haag Lawn"
+        run_duration_number:
+          id: run_duration_haag
+          name: "Duurtijd Haag"
+          icon: "mdi:timer-outline"
+          initial_value: 30
+          min_value: 5
+          max_value: 90
+          unit_of_measurement: min
+        valve_on_switch_id: relay3
+        valve_off_switch_id: relay4
+      - valve_switch: "Zwembad Lawn"
+        enable_switch: "Enable Zwembad Lawn"
+        run_duration_number:
+          id: run_duration_zwembad
+          name: "Duurtijd Zwembad"
+          icon: "mdi:timer-outline"
+          initial_value: 30
+          min_value: 5
+          max_value: 90
+          unit_of_measurement: min
+        valve_on_switch_id: relay5
+        valve_off_switch_id: relay6
+
+# Text sensors with general information.
+text_sensor:
+  # Expose Uptime human readable
+  - platform: template
+    name: ${device_name} Uptime
+    id: ${device_id}_uptime_human
+    icon: mdi:clock-start
+  # Expose ESPHome version as sensor.
+  - platform: version
+    name: ${device_name} ESPHome Version
+
+sensor:
+# WiFi Signal sensor.
+  - platform: wifi_signal
+    name: ${device_name} WiFi Signal
+    update_interval: 360s
+# Uptime sensor.
+  - platform: uptime
+    id: ${device_id}_uptime_sensor
+    update_interval: 60s
+    on_raw_value:
+      then:
+        - text_sensor.template.publish:
+            id: ${device_id}_uptime_human
+            state: !lambda |-
+              int seconds = round(id(${device_id}_uptime_sensor).raw_state);
+              int days = seconds / (24 * 3600);
+              seconds = seconds % (24 * 3600);
+              int hours = seconds / 3600;
+              seconds = seconds % 3600;
+              int minutes = seconds /  60;
+              seconds = seconds % 60;
+              return (
+                (days ? String(days) + "d " : "") +
+                (hours ? String(hours) + "h " : "") +
+                (minutes ? String(minutes) + "m " : "") +
+                (String(seconds) + "s")
+              ).c_str();
+
+switch:
+  - platform: gpio
+    name: "Open Valve 1"
+    id: relay1
+    internal: True
+    pin:
+      mcp23xxx: mcp23017_hub
+      # Use pin B0
+      number: 8
+      mode:
+        output: true
+      inverted: true
+
+  - platform: gpio
+    name: "Close Valve 1"
+    id: relay2
+    internal: True
+    pin:
+      mcp23xxx: mcp23017_hub
+      # Use pin B1
+      number: 9
+      mode:
+        output: true
+      inverted: true
+
+  - platform: gpio
+    name: "Open Valve 2"
+    id: relay3
+    internal: True
+    pin:
+      mcp23xxx: mcp23017_hub
+      # Use pin B2
+      number: 10
+      mode:
+        output: true
+      inverted: true
+
+  - platform: gpio
+    name: "Close Valve 2"
+    id: relay4
+    internal: True
+    pin:
+      mcp23xxx: mcp23017_hub
+      # Use pin B3
+      number: 11
+      mode:
+        output: true
+      inverted: true
+
+  - platform: gpio
+    name: "Open Valve 3"
+    id: relay5
+    internal: True
+    pin:
+      mcp23xxx: mcp23017_hub
+      # Use pin B4
+      number: 12
+      mode:
+        output: true
+      inverted: true
+
+  - platform: gpio
+    name: "Close Valve 3"
+    id: relay6
+    internal: True
+    pin:
+      mcp23xxx: mcp23017_hub
+      # Use pin B5
+      number: 13
+      mode:
+        output: true
+      inverted: true
+
+  - platform: gpio
+    name: "Relay 7"
+    id: relay7
+    internal: True
+    pin:
+      mcp23xxx: mcp23017_hub
+      # Use pin B6
+      number: 14
+      mode:
+        output: true
+      inverted: true
+
+  - platform: gpio
+    name: "Relay 8"
+    id: relay8
+    internal: True
+    pin:
+      mcp23xxx: mcp23017_hub
+      # Use pin B7
+      number: 15
+      mode:
+        output: true
+      inverted: true

@@ -1,0 +1,145 @@
+################################################################################
+# ESP 32 Relay Board X16
+################################################################################
+# Usage:
+#   Add the following code to package section in the device file
+# ------------------------------------------------------------------------------
+# packages:
+#   board: !include boards/esp32/esp32_relay_x16.yaml
+# ------------------------------------------------------------------------------
+# Author: Joris Tielemans
+################################################################################
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+# IO0 button can be configured as a binary_sensor
+binary_sensor:
+  - platform: gpio
+    name: "onboardbutton"
+    pin: GPIO0
+    filters:
+      - invert:
+
+sn74hc595:
+  - id: sn74hc595_hub
+    data_pin: GPIO14
+    clock_pin: GPIO13
+    latch_pin: GPIO12
+    oe_pin: GPIO05
+    sr_count: 2
+
+switch:
+  - platform: gpio
+    name: Relay01
+    id: relay01
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 0
+
+  - platform: gpio
+    name: Relay02
+    id: relay02
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 1
+
+  - platform: gpio
+    name: Relay03
+    id: relay03
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 2
+
+  - platform: gpio
+    name: Relay04
+    id: relay04
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 3
+
+  - platform: gpio
+    name: Relay05
+    id: relay05
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 4
+
+  - platform: gpio
+    name: Relay06
+    id: relay06
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 5
+
+  - platform: gpio
+    name: Relay07
+    id: relay07
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 6
+
+  - platform: gpio
+    name: Relay08
+    id: relay08
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 7
+
+  - platform: gpio
+    name: Relay09
+    id: relay09
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 8
+
+  - platform: gpio
+    name: Relay10
+    id: relay10
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 9
+
+  - platform: gpio
+    name: Relay11
+    id: relay11
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 10
+
+  - platform: gpio
+    name: Relay12
+    id: relay12
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 11
+
+  - platform: gpio
+    name: Relay13
+    id: relay13
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 12
+
+  - platform: gpio
+    name: Relay14
+    id: relay14
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 13
+
+  - platform: gpio
+    name: Relay15
+    id: relay15
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 14
+
+  - platform: gpio
+    name: Relay16
+    id: relay16
+    pin:
+      sn74hc595: sn74hc595_hub
+      number: 15

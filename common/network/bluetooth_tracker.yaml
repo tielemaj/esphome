@@ -1,0 +1,11 @@
+###############################################################################
+# Bluetooth
+###############################################################################
+esp32_ble:
+  enable_on_boot: true
+
+esp32_ble_tracker:
+  id: ${device_internal_name}_ble_tracker
+
+bluetooth_proxy:
+  active: true

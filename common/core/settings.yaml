@@ -1,0 +1,85 @@
+###############################################################################
+# Board Configuration
+###############################################################################
+esphome:
+  name: ${device_internal_name}
+  friendly_name: ${device_friendly_name}
+
+###############################################################################
+# Enable logging
+###############################################################################
+logger:
+
+###############################################################################
+# Enable logging
+###############################################################################
+api:
+  id: ${device_internal_name}_ha_api
+  encryption:
+    key: !secret api_encryption_key
+  reboot_timeout: 0s
+
+###############################################################################
+# OTA Settings
+###############################################################################
+ota:
+  platform: esphome
+  password: !secret ota_password
+
+safe_mode:
+  disabled: false
+  reboot_timeout: 10min
+  num_attempts: 5
+
+###############################################################################
+# Network Settings
+###############################################################################
+# Ensure mDNS is enabled
+mdns:
+  disabled: false
+
+# Disable IPV6
+network:
+  enable_ipv6: False
+
+###############################################################################
+# Binary Sensors
+###############################################################################
+binary_sensor:
+  # ESP Status Sensor
+  - platform: status
+    id: ${device_internal_name}_status
+
+###############################################################################
+# Sensors
+###############################################################################
+sensor:
+  # Human Readable Uptime Conversion Sensor
+  - platform: uptime
+    id: ${device_internal_name}_uptime_sensor
+    name: "Uptime Sensor"
+    update_interval: ${device_sampling_time}
+
+###############################################################################
+# Text Sensors
+###############################################################################
+text_sensor:
+  # ESPHome Version Sensor
+  - platform: version
+    id: ${device_internal_name}_version
+    name: "ESPHome Version"
+    disabled_by_default: true
+
+###############################################################################
+# Switch
+###############################################################################
+switch:
+  # Soft Restart the device
+  - platform: restart
+    id: ${device_internal_name}_device_restart
+    name: "Restart"
+
+  # Restart the device in Safe Mode
+  - platform: safe_mode
+    id: ${device_internal_name}_device_safe_mode
+    name: "Use Safe Mode"

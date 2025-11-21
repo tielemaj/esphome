@@ -1,0 +1,73 @@
+################################################################################
+# ESP12F
+################################################################################
+# Usage:
+#   Add the following code to package section in the device file
+# ------------------------------------------------------------------------------
+# packages:
+#   board: !include common/esp8266/esp12f_relay_x8.yaml
+# ------------------------------------------------------------------------------
+# Author: Pascal Parent
+# Company: Home Automator (ZA)
+# Web: https://www.youtube.com/@homeautomatorza
+# Version: 1.0.0
+# Licence: CCO 1.0 https://creativecommons.org/publicdomain/zero/1.0/
+# ------------------------------------------------------------------------------
+# Notes:
+#     - Tested OK
+# ------------------------------------------------------------------------------
+# WARNING:
+# This code carries a "It works on my setup" disclaimer!
+# Meaning that it works on my setup but it may not work on yours.
+# Use at your own risks!
+################################################################################
+
+defaults:
+  restorefromflash: false
+
+esp8266:
+  board: esp12e
+  framework:
+    version: latest
+  restore_from_flash: ${restorefromflash}
+
+# Status led
+status_led:
+  pin:
+    number: GPIO2
+    inverted: true
+
+# 8 relay outputs, exposed as switches in Home Assistant
+switch:
+  - platform: gpio
+    pin: GPIO16
+    name: Relay1
+    id: relay1
+  - platform: gpio
+    pin: GPIO14
+    name: Relay2
+    id: relay2
+  - platform: gpio
+    pin: GPIO12
+    name: Relay3
+    id: relay3
+  - platform: gpio
+    pin: GPIO13
+    name: Relay4
+    id: relay4
+  - platform: gpio
+    pin: GPIO15
+    name: Relay5
+    id: relay5
+  - platform: gpio
+    pin: GPIO00
+    name: Relay6
+    id: relay6
+  - platform: gpio
+    pin: GPIO04
+    name: Relay7
+    id: relay7
+  - platform: gpio
+    pin: GPIO05
+    name: Relay8
+    id: relay8

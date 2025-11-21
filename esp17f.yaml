@@ -1,0 +1,45 @@
+# -----------------------------------------------------------------------------
+# Substitution Variables
+# -----------------------------------------------------------------------------
+substitutions:
+  device_internal_name: esp17f
+  device_friendly_name: Esp12F
+  device_wifi_name: esp17f
+  device_sampling_time: 30s
+
+# -----------------------------------------------------------------------------
+# Common Packages
+# -----------------------------------------------------------------------------
+packages:
+  # ---------------------------------------------------------------------------
+  # Board
+  # ---------------------------------------------------------------------------
+  board: !include
+    file: boards/esp8266/esp12f_relay_x8.yaml
+    vars:
+      restorefromflash: true
+  settings: !include common/core/settings.yaml
+  
+  # ---------------------------------------------------------------------------
+  # Network
+  # ---------------------------------------------------------------------------
+  wifi: !include common/network/wifi.yaml
+  webserver: !include common/network/webserver.yaml
+
+# -----------------------------------------------------------------------------
+# Custom Device Configuration
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Sensors
+# -----------------------------------------------------------------------------
+switch:
+  # - id: !extend relay1
+  #   name: RelayRename
+  #   web_server:
+  #     sorting_weight: 10
+  # - id: !extend relay2
+  #   internal: true
+  - id: !extend relay8
+    name: BranderContact
+    restore_mode: RESTORE_DEFAULT_OFF

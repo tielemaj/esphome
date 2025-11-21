@@ -1,0 +1,87 @@
+esphome:
+  name: wemosberging
+  friendly_name: Wemos Berging
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "NyJEXZbbHt8l6hGSVc4VoLIJFW8OJHGnFfitZVEi7xo="
+
+ota:
+  - platform: esphome
+    password: "34fc65934abda98a091784323e2206aa"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Wemosberging Fallback Hotspot"
+    password: "nO3Su2b16h3P"
+
+captive_portal:
+
+web_server:
+  port: 80
+
+# Text sensors with general information.
+text_sensor:
+  # Expose Uptime human readable
+  - platform: template
+    name: Wemos Berging Uptime
+    id: wemos_berging_uptime_human
+    icon: mdi:clock-start
+  # Expose ESPHome version as sensor.
+  - platform: version
+    name: Wemos Berging ESPHome Version
+
+sensor:
+# WiFi Signal sensor.
+  - platform: wifi_signal
+    name: Wemos Berging WiFi Signal
+    update_interval: 360s
+# Uptime sensor.
+  - platform: uptime
+    id: wemos_berging_uptime_sensor
+    update_interval: 60s
+    on_raw_value:
+      then:
+        - text_sensor.template.publish:
+            id: wemos_berging_uptime_human
+            state: !lambda |-
+              int seconds = round(id(wemos_berging_uptime_sensor).raw_state);
+              int days = seconds / (24 * 3600);
+              seconds = seconds % (24 * 3600);
+              int hours = seconds / 3600;
+              seconds = seconds % 3600;
+              int minutes = seconds /  60;
+              seconds = seconds % 60;
+              return (
+                (days ? String(days) + "d " : "") +
+                (hours ? String(hours) + "h " : "") +
+                (minutes ? String(minutes) + "m " : "") +
+                (String(seconds) + "s")
+              ).c_str();
+
+  - platform: dht
+    pin: GPIO2
+    model: DHT22
+    temperature:
+      name: "Berging Temperature"
+      accuracy_decimals: 1
+    humidity:
+      name: "Berging Humidity"
+      accuracy_decimals: 1
+    update_interval: 60s
+
+switch:
+  - platform: gpio
+    name: "Fan"
+    pin: GPIO5
