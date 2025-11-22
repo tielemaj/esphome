@@ -32,6 +32,10 @@ esp8266:
     version: latest
   restore_from_flash: ${restorefromflash}
 
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
 # Status led
 status_led:
   pin:
