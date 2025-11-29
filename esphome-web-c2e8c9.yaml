@@ -21,6 +21,8 @@ wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
 
+web_server:
+  
 # Device Specific Config
 binary_sensor:
   - platform: gpio

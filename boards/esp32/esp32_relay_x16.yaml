@@ -18,6 +18,7 @@ esp32:
 # IO0 button can be configured as a binary_sensor
 binary_sensor:
   - platform: gpio
+    id: onboardbutton
     name: "onboardbutton"
     pin: GPIO0
     filters:

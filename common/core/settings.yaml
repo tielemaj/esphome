@@ -53,30 +53,6 @@ binary_sensor:
 ###############################################################################
 # Sensors
 ###############################################################################
-sensor:
-  # Human Readable Uptime Conversion Sensor
-  - platform: uptime
-    id: ${device_internal_name}_uptime_sensor
-    name: "Uptime Sensor"
-    update_interval: ${device_sampling_time}
-    on_raw_value:
-      then:
-        - text_sensor.template.publish:
-            id: ${device_internal_name}_uptime_human
-            state: !lambda |-
-              int seconds = round(id(${device_internal_name}_uptime_sensor).raw_state);
-              int days = seconds / (24 * 3600);
-              seconds = seconds % (24 * 3600);
-              int hours = seconds / 3600;
-              seconds = seconds % 3600;
-              int minutes = seconds /  60;
-              seconds = seconds % 60;
-              return (
-                (days ? String(days) + "d " : "") +
-                (hours ? String(hours) + "h " : "") +
-                (minutes ? String(minutes) + "m " : "") +
-                (String(seconds) + "s")
-              ).c_str();
 
 ###############################################################################
 # Text Sensors
@@ -87,11 +63,12 @@ text_sensor:
     id: ${device_internal_name}_version
     name: "ESPHome Version"
     disabled_by_default: true
-  # Expose Uptime human readable
-  - platform: template
-    name: Wemos Barn Uptime
-    id: ${device_internal_name}_uptime_human
-    icon: mdi:clock-start
+  - platform: uptime
+    id: ${device_internal_name}_uptime_sensor
+    name: "${device_friendly_name} Uptime Sensor"
+    update_interval: ${device_sampling_time}
+    # format:
+    #   separator: " "
 
 ###############################################################################
 # Switch
