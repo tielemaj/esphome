@@ -16,10 +16,10 @@
 
 # Mode 1
 # - Source: Heatpipes
-# - Destination: Pool
-#   - Block Heat Pump: false
-#   - Valve1: Open
-#   - Valve2:
+# - Destination: Floor heating
+#   - Block Heat Pump: true
+#   - Valve1: Closed
+#   - Valve2: Closed
 #   - Valve3: Closed
 #   - Pump Pool: on
 #   - Activate pellet burner: request from HA
@@ -36,10 +36,10 @@
 
 # Mode 3
 # - Source: Heatpipes
-# - Destination: Floor heating
-#   - Block Heat Pump: true
-#   - Valve1: Closed
-#   - Valve2: Closed
+# - Destination: Pool
+#   - Block Heat Pump: false
+#   - Valve1: Open
+#   - Valve2:
 #   - Valve3: Closed
 #   - Pump Pool: on
 #   - Activate pellet burner: request from HA
@@ -508,19 +508,25 @@ script:
   - id: mode1
     then:
       - logger.log:
-          format: "Mode 1"
+          format: "Mode 3"
           level: WARN
       - script.stop: mode0
+      - script.stop: mode1
       - script.stop: mode2
-      - script.stop: mode3
       - script.stop: mode4
       - script.stop: mode5
       - script.stop: mode6
       - if:
           condition:
-            lambda: "return id(valve1).position != VALVE_OPEN;"
+            lambda: "return id(valve1).position != VALVE_CLOSED;"
           then:
-            - valve.open: valve1
+            - valve.close: valve1
+      #            - delay: ${valve_run_time}
+      - if:
+          condition:
+            lambda: "return id(valve1).position != VALVE_CLOSED;"
+          then:
+            - valve.close: valve1
       #            - delay: ${valve_run_time}
       - if:
           condition:
@@ -528,7 +534,7 @@ script:
           then:
             - valve.close: valve3
       #            - delay: ${valve_run_time}
-      - switch.turn_off: ${blockheatpump}
+      - switch.turn_on: ${blockheatpump}
       - switch.turn_off: heatingrequestpelletburnernonradiators
       - while:
           condition:
@@ -590,25 +596,19 @@ script:
   - id: mode3
     then:
       - logger.log:
-          format: "Mode 3"
+          format: "Mode 1"
           level: WARN
       - script.stop: mode0
-      - script.stop: mode1
       - script.stop: mode2
+      - script.stop: mode3
       - script.stop: mode4
       - script.stop: mode5
       - script.stop: mode6
       - if:
           condition:
-            lambda: "return id(valve1).position != VALVE_CLOSED;"
+            lambda: "return id(valve1).position != VALVE_OPEN;"
           then:
-            - valve.close: valve1
-      #            - delay: ${valve_run_time}
-      - if:
-          condition:
-            lambda: "return id(valve1).position != VALVE_CLOSED;"
-          then:
-            - valve.close: valve1
+            - valve.open: valve1
       #            - delay: ${valve_run_time}
       - if:
           condition:
@@ -616,7 +616,7 @@ script:
           then:
             - valve.close: valve3
       #            - delay: ${valve_run_time}
-      - switch.turn_on: ${blockheatpump}
+      - switch.turn_off: ${blockheatpump}
       - switch.turn_off: heatingrequestpelletburnernonradiators
       - while:
           condition:
