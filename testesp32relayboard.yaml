@@ -207,7 +207,10 @@ binary_sensor:
 
   # sensor to see if the pellet burner is ready
   - platform: gpio
-    pin: GPIO27 #ToDo
+    pin:
+      number: GPIO27 #ToDo
+      mode: INPUT_PULLUP
+      inverted: True
     name: "Pellet Burner Ready"
     id: pelletburnerready
     on_state:
