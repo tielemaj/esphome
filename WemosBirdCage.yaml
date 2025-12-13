@@ -6,7 +6,7 @@ substitutions:
   device_friendly_name: WemosBirdCage
   device_wifi_name: WemosBirdCage
   device_sampling_time: 30s
-  transition_length: 900s
+  transition_length: 30min
 
 # -----------------------------------------------------------------------------
 # Common Packages

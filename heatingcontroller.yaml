@@ -86,20 +86,20 @@ esphome:
 # Substitution Variables
 # -----------------------------------------------------------------------------
 substitutions:
-  device_internal_name: testesp32relayboard
-  device_friendly_name: TestEsp32RelayBoard
-  device_wifi_name: testesp32relayboard
-  device_sampling_time: 300s
-  valve_run_time: 5s
-  pumpradiator: relay16
-  pumppool: relay15
-  blockheatpump: relay14
-  pelletburner: relay13
-  openvalve1: relay01
-  closevalve1: relay02
-  openvalve2: relay03
-  closevalve2: relay04
-  openvalve3: relay05
+  device_internal_name: heatingcontroller
+  device_friendly_name: HeatingController
+  device_wifi_name: HeatingController
+  device_sampling_time: 30s
+  valve_run_time: 40s
+  pumpradiator: relay06
+  pumppool: relay11
+  blockheatpump: relay16
+  pelletburner: relay01
+  openvalve1: relay09
+  closevalve1: relay10
+  openvalve2: relay08
+  closevalve2: relay07
+  openvalve3: relay12
 
 # -----------------------------------------------------------------------------
 # Common Packages
@@ -131,7 +131,7 @@ packages:
 # -----------------------------------------------------------------------------
 one_wire:
   - platform: gpio
-    pin: GPIO26
+    pin: GPIO27
     #id: bus1
 
 # -----------------------------------------------------------------------------
@@ -144,7 +144,7 @@ sensor:
     name: temperatureheatpipes
     update_interval: ${device_sampling_time}
     accuracy_decimals: 1
-  #   address: 0x44012212da27cc11
+    # address: 0x44012212da27cc11
 
   - platform: homeassistant
     id: heatpipesmode
@@ -158,9 +158,9 @@ sensor:
           } else {
             return x;
           }
-      - timeout:
-          timeout: 180s
-          value: !lambda return -1;
+      # - timeout:
+      #     timeout: 180s
+      #     value: !lambda return -1;
     on_value:
       then:
         - lambda: |-
@@ -179,17 +179,6 @@ sensor:
 # Text Sensors
 # -----------------------------------------------------------------------------
 # text_sensor:
-#   - platform: template
-#     name: "Template Text Sensor"
-#     lambda: |-
-#         if (id(valve1).current_operation == ValveOperation::VALVE_OPERATION_IDLE) {
-#            return {"VALVE_OPERATION_IDLE"};
-#         } else if (id(valve1).current_operation == ValveOperation::VALVE_OPERATION_OPENING) {
-#            return {"VALVE_OPERATION_IDLE"};
-#         } else if (id(valve1).current_operation == ValveOperation::VALVE_OPERATION_CLOSING) {
-#            return {"VALVE_OPERATION_IDLE"};
-#         }
-#     update_interval: 1s
 
 # -----------------------------------------------------------------------------q
 # Binary Sensors
@@ -208,7 +197,7 @@ binary_sensor:
   # sensor to see if the pellet burner is ready
   - platform: gpio
     pin:
-      number: GPIO27 #ToDo
+      number: GPIO26 #ToDo
       mode: INPUT_PULLUP
       inverted: True
     name: "Pellet Burner Ready"
@@ -217,25 +206,17 @@ binary_sensor:
       then:
         - script.execute: checkpelletburner
 
-  # request for the pelletburner non radiators
-  # - platform: template
-  #   name: "Request Pelletburner non radiators"
-  #   id: heatingrequestpelletburnernonradiators
-  #   on_state:
+  # - id: !extend "onboardbutton"
+  #   on_click:
   #     then:
-  #       - script.execute: checkpelletburner
-
-  - id: !extend "onboardbutton"
-    on_click:
-      then:
-        - logger.log: "Before"
-        - script.execute: mode2
-        - while:
-            condition:
-              script.is_running: mode1
-            then:
-              - delay: 1s
-        - logger.log: "after"
+  #       - logger.log: "Before"
+  #       - script.execute: mode2
+  #       - while:
+  #           condition:
+  #             script.is_running: mode1
+  #           then:
+  #             - delay: 1s
+  #       - logger.log: "after"
 
 # -----------------------------------------------------------------------------
 # Switches
@@ -244,33 +225,56 @@ switch:
   # motor to feed the radiators
   - id: !extend ${pumpradiator}
     name: "Pump Radiators"
+    internal: true
 
   # motor to feed the radiatorspool/hot water/floor heating
   - id: !extend ${pumppool}
     name: "Pump Pool"
+    internal: true
 
   # Signal to block the heatpump
   - id: !extend ${blockheatpump}
     name: "Block heatpump"
+    internal: true
 
   # Activate pellet burner
   - id: !extend ${pelletburner}
     name: "Pelletburner"
+    internal: true
 
   - id: !extend ${openvalve1}
     name: "OpenValve1"
     internal: true
+
   - id: !extend ${closevalve1}
     name: "CloseValve1"
     internal: true
+
   - id: !extend ${openvalve2}
     name: "OpenValve2"
     internal: true
+
   - id: !extend ${closevalve2}
     name: "CloseValve2"
     internal: true
+
   - id: !extend ${openvalve3}
     name: "OpenValve3"
+    internal: true
+
+  - id: !extend relay02
+    internal: true
+  - id: !extend relay03
+    internal: true
+  - id: !extend relay04
+    internal: true
+  - id: !extend relay05
+    internal: true
+  - id: !extend relay13
+    internal: true
+  - id: !extend relay14
+    internal: true
+  - id: !extend relay15
     internal: true
 
   # request for the pelletburner non radiators
@@ -290,26 +294,18 @@ valve:
   - platform: template
     id: valve1
     name: "Valve 1"
+    internal: true
     open_action:
       - script.execute: open_valve1
-      # - while:
-      #     condition:
-      #       script.is_running: open_valve1
-      #     then:
-      #       - delay: 250s
     close_action:
       - script.execute: close_valve1
-      # - while:
-      #     condition:
-      #       script.is_running: close_valve1
-      #     then:
-      #       - delay: 250s
     stop_action:
       - script.execute: stop_valve1
 
   # valve that switches between the heathing and the hot water
   - platform: template
     id: valve2
+    internal: true
     name: "Valve 2"
     open_action:
       - script.execute: open_valve2
@@ -321,6 +317,7 @@ valve:
   # valve that switches between the solar panels and the pellet burner
   - platform: template
     id: valve3
+    internal: true
     name: "Valve 3"
     open_action:
       - script.execute: open_valve3
@@ -435,25 +432,20 @@ script:
           else:
             switch.turn_off: ${pumppool}
 
-  # - id: checkValves
-  #   mode: restart
-  #   then:
-  #     - while:
-  #         condition:
-  #           or:
-  #             - script.is_running: open_valve1
-  #             - script.is_running: open_valve2
-  #             - script.is_running: open_valve3
-  #             - script.is_running: close_valve1
-  #             - script.is_running: close_valve2
-  #             - script.is_running: close_valve3
-  #         then:
-  #           - delay: 25ms
-
   - id: modechanged
     mode: restart
     then:
       - delay: 1s
+      - if:
+          condition:
+            lambda: "return id(heatpipesmode).state == -2;"
+          then:
+            - script.execute: mode0
+      - if:
+          condition:
+            lambda: "return id(heatpipesmode).state == -1;"
+          then:
+            - script.execute: mode0
       - if:
           condition:
             lambda: "return id(heatpipesmode).state == 0;"
@@ -524,19 +516,16 @@ script:
             lambda: "return id(valve1).position != VALVE_CLOSED;"
           then:
             - valve.close: valve1
-      #            - delay: ${valve_run_time}
       - if:
           condition:
             lambda: "return id(valve1).position != VALVE_CLOSED;"
           then:
             - valve.close: valve1
-      #            - delay: ${valve_run_time}
       - if:
           condition:
             lambda: "return id(valve3).position != VALVE_CLOSED;"
           then:
             - valve.close: valve3
-      #            - delay: ${valve_run_time}
       - switch.turn_on: ${blockheatpump}
       - switch.turn_off: heatingrequestpelletburnernonradiators
       - while:
@@ -568,19 +557,16 @@ script:
             lambda: "return id(valve1).position != VALVE_CLOSED;"
           then:
             - valve.close: valve1
-      #            - delay: ${valve_run_time}
       - if:
           condition:
             lambda: "return id(valve2).position != VALVE_OPEN;"
           then:
             - valve.open: valve2
-      #            - delay: ${valve_run_time}
       - if:
           condition:
             lambda: "return id(valve3).position != VALVE_CLOSED;"
           then:
             - valve.close: valve3
-      #            - delay: ${valve_run_time}
       - switch.turn_on: ${blockheatpump}
       - switch.turn_off: heatingrequestpelletburnernonradiators
       - while:
@@ -612,13 +598,11 @@ script:
             lambda: "return id(valve1).position != VALVE_OPEN;"
           then:
             - valve.open: valve1
-      #            - delay: ${valve_run_time}
       - if:
           condition:
             lambda: "return id(valve3).position != VALVE_CLOSED;"
           then:
             - valve.close: valve3
-      #            - delay: ${valve_run_time}
       - switch.turn_off: ${blockheatpump}
       - switch.turn_off: heatingrequestpelletburnernonradiators
       - while:
@@ -650,13 +634,11 @@ script:
             lambda: "return id(valve1).position != VALVE_OPEN;"
           then:
             - valve.open: valve1
-      #            - delay: ${valve_run_time}
       - if:
           condition:
             lambda: "return id(valve3).position != VALVE_OPEN;"
           then:
             - valve.open: valve3
-      #            - delay: ${valve_run_time}
       - switch.turn_off: ${blockheatpump}
       - while:
           condition:
@@ -687,20 +669,17 @@ script:
             lambda: "return id(valve1).position != VALVE_CLOSED;"
           then:
             - valve.close: valve1
-      #            - delay: ${valve_run_time}
       - if:
           condition:
             lambda: "return id(valve2).position != VALVE_OPEN;"
           then:
             - valve.open: valve2
-      #            - delay: ${valve_run_time}
       - if:
           condition:
             lambda: "return id(valve3).position != VALVE_OPEN;"
           then:
             - valve.open: valve3
-      #            - delay: ${valve_run_time}
-      - switch.turn_off: ${blockheatpump}
+      - switch.turn_on: ${blockheatpump}
       - while:
           condition:
             or:
@@ -730,19 +709,16 @@ script:
             lambda: "return id(valve1).position != VALVE_CLOSED;"
           then:
             - valve.close: valve1
-      #            - delay: ${valve_run_time}
       - if:
           condition:
             lambda: "return id(valve2).position != VALVE_CLOSED;"
           then:
             - valve.close: valve2
-      #            - delay: ${valve_run_time}
       - if:
           condition:
             lambda: "return id(valve3).position != VALVE_OPEN;"
           then:
             - valve.open: valve3
-      #            - delay: ${valve_run_time}
       - switch.turn_off: ${blockheatpump}
       - while:
           condition:

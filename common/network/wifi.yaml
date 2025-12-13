@@ -10,6 +10,7 @@ wifi:
   ap:
     ssid: ${device_wifi_name}
     password: !secret ap_password
+    ap_timeout: 180s
 
 captive_portal:
 
