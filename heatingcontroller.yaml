@@ -202,6 +202,7 @@ binary_sensor:
       inverted: True
     name: "Pellet Burner Ready"
     id: pelletburnerready
+    internal: true
     on_state:
       then:
         - script.execute: checkpelletburner
@@ -503,7 +504,7 @@ script:
   - id: mode1
     then:
       - logger.log:
-          format: "Mode 3"
+          format: "Mode 1"
           level: WARN
       - script.stop: mode0
       - script.stop: mode1
@@ -585,7 +586,7 @@ script:
   - id: mode3
     then:
       - logger.log:
-          format: "Mode 1"
+          format: "Mode 3"
           level: WARN
       - script.stop: mode0
       - script.stop: mode2
