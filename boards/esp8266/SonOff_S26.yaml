@@ -12,6 +12,7 @@ esp8266:
 # -----------------------------------------------------------------------------
 binary_sensor:
   - platform: gpio
+    id: button
     pin:
       number: GPIO0
       mode: INPUT_PULLUP
@@ -19,16 +20,12 @@ binary_sensor:
     name: "Button"
     on_press:
       - switch.toggle: relay
-#   - platform: status
-#     name: "Status"
 
 # -----------------------------------------------------------------------------
 # Switches
 # -----------------------------------------------------------------------------
 switch:
   - platform: gpio
-    name: "Relay"
     pin: GPIO12
     id: "relay"
-#   - platform: restart
-#     name: "sonoffs26_1 Restart"   
+    name: "Relay"

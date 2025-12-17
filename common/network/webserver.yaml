@@ -14,4 +14,4 @@ web_server:
   auth:
     username: !secret web_server_user
     password: !secret web_server_password
-  local: true
+  local: false
