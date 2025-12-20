@@ -38,6 +38,9 @@ esphome:
             pinMode(D8, OUTPUT);
             digitalWrite(D8, HIGH);
 
+uart: !remove
+spi: !remove
+
 i2c:
   sda: GPIO4
   scl: GPIO5

@@ -57,7 +57,7 @@
 # Mode 5
 # - Source: Pellets
 # - Destination: Hot water
-#   - Block Heat Pump: true
+#   - Block Heat Pump: false
 #   - Valve1: Closed
 #   - Valve2: Open
 #   - Valve3: Open
@@ -67,7 +67,7 @@
 # Mode 6
 # - Source: Pellets
 # - Destination: Floor heating
-#   - Block Heat Pump: true
+#   - Block Heat Pump: false
 #   - Valve1: Closed
 #   - Valve2: Closed
 #   - Valve3: Open
@@ -202,7 +202,7 @@ binary_sensor:
       inverted: True
     name: "Pellet Burner Ready"
     id: pelletburnerready
-    internal: true
+    #internal: true
     on_state:
       then:
         - script.execute: checkpelletburner
@@ -507,8 +507,8 @@ script:
           format: "Mode 1"
           level: WARN
       - script.stop: mode0
-      - script.stop: mode1
       - script.stop: mode2
+      - script.stop: mode3
       - script.stop: mode4
       - script.stop: mode5
       - script.stop: mode6
@@ -589,8 +589,8 @@ script:
           format: "Mode 3"
           level: WARN
       - script.stop: mode0
+      - script.stop: mode1
       - script.stop: mode2
-      - script.stop: mode3
       - script.stop: mode4
       - script.stop: mode5
       - script.stop: mode6
@@ -680,7 +680,7 @@ script:
             lambda: "return id(valve3).position != VALVE_OPEN;"
           then:
             - valve.open: valve3
-      - switch.turn_on: ${blockheatpump}
+      - switch.turn_off: ${blockheatpump}
       - while:
           condition:
             or:
