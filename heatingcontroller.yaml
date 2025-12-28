@@ -74,13 +74,13 @@
 #   - Pump Pool: on if pelletburnerready
 #   - Activate pellet burner: true
 
-esphome:
-  on_boot:
-    then:
-      - valve.close: valve1
-      - valve.close: valve2
-      - valve.close: valve3
-      - delay: ${valve_run_time}
+# esphome:
+#   on_boot:
+#     then:
+#       - valve.close: valve1
+#       - valve.close: valve2
+#       - valve.close: valve3
+#       - delay: ${valve_run_time}
 
 # -----------------------------------------------------------------------------
 # Substitution Variables
@@ -90,7 +90,7 @@ substitutions:
   device_friendly_name: HeatingController
   device_wifi_name: HeatingController
   device_sampling_time: 30s
-  valve_run_time: 40s
+  valve_run_time: 45s
   pumpradiator: relay06
   pumppool: relay11
   blockheatpump: relay16
@@ -146,11 +146,16 @@ sensor:
     accuracy_decimals: 1
     # address: 0x44012212da27cc11
 
+  - platform: template
+    name: "Current Mode"
+    id: currentmode
+
   - platform: homeassistant
     id: heatpipesmode
     name: "Heatpipes Mode"
-    entity_id: sensor.heatpipes_mode
-    internal: true
+    entity_id: input_number.mode_heatpipes
+#    entity_id: sensor.heatpipes_mode #input_number.mode_heatpipes
+    #internal: true
     filters:
       - lambda: |-
           if (isnan(x)) {
@@ -397,11 +402,6 @@ script:
       - valve.template.publish:
           id: valve3
           state: CLOSED
-  # - id: stop_valve3
-  #   then:
-  #     - script.stop: close_valve3
-  #     - script.stop: open_valve3
-  #     - switch.turn_off: relay05
 
   - id: checkpelletburner
     then:
@@ -500,6 +500,12 @@ script:
       - valve.close: valve3
       - switch.turn_off: ${blockheatpump}
       - switch.turn_off: heatingrequestpelletburnernonradiators
+      - sensor.template.publish:
+          id: currentmode
+          state: 0
+      - logger.log:
+          format: "End Script Mode 0"
+          level: WARN
 
   - id: mode1
     then:
@@ -521,7 +527,7 @@ script:
           condition:
             lambda: "return id(valve1).position != VALVE_CLOSED;"
           then:
-            - valve.close: valve1
+            - valve.close: valve2
       - if:
           condition:
             lambda: "return id(valve3).position != VALVE_CLOSED;"
@@ -541,6 +547,12 @@ script:
           then:
             - delay: 25ms
       - switch.turn_on: ${pumppool}
+      - sensor.template.publish:
+          id: currentmode
+          state: 1
+      - logger.log:
+          format: "End Script Mode 1"
+          level: WARN
 
   - id: mode2
     then:
@@ -582,6 +594,12 @@ script:
           then:
             - delay: 25ms
       - switch.turn_on: ${pumppool}
+      - sensor.template.publish:
+          id: currentmode
+          state: 2
+      - logger.log:
+          format: "End Script Mode 2"
+          level: WARN
 
   - id: mode3
     then:
@@ -618,6 +636,12 @@ script:
           then:
             - delay: 25ms
       - switch.turn_on: ${pumppool}
+      - sensor.template.publish:
+          id: currentmode
+          state: 3
+      - logger.log:
+          format: "End Script Mode 3"
+          level: WARN
 
   - id: mode4
     then:
@@ -653,6 +677,12 @@ script:
           then:
             - delay: 25ms
       - switch.turn_on: heatingrequestpelletburnernonradiators
+      - sensor.template.publish:
+          id: currentmode
+          state: 4
+      - logger.log:
+          format: "End Script Mode 4"
+          level: WARN
 
   - id: mode5
     then:
@@ -680,6 +710,13 @@ script:
             lambda: "return id(valve3).position != VALVE_OPEN;"
           then:
             - valve.open: valve3
+            - logger.log:
+                format: "Mode 5: Opening valve 3"
+                level: WARN
+          else:
+            - logger.log:
+                format: "Mode 5: valve 3 already open"
+                level: WARN
       - switch.turn_off: ${blockheatpump}
       - while:
           condition:
@@ -693,6 +730,12 @@ script:
           then:
             - delay: 25ms
       - switch.turn_on: heatingrequestpelletburnernonradiators
+      - sensor.template.publish:
+          id: currentmode
+          state: 5
+      - logger.log:
+          format: "End Script Mode 5"
+          level: WARN
 
   - id: mode6
     then:
@@ -733,12 +776,9 @@ script:
           then:
             - delay: 25ms
       - switch.turn_on: heatingrequestpelletburnernonradiators
-
-      # - valve.stop: valve1
-      # - valve.stop: valve2
-      # - valve.stop: valve3
-      # - if:
-      #     condition:
-      #       switch.is_on: heatingrequestpelletburnernonradiators
-      #     then:
-      #       switch.turn_on: ${pumpradiator}
+      - sensor.template.publish:
+          id: currentmode
+          state: 6      
+      - logger.log:
+          format: "End Script Mode 6"
+          level: WARN
