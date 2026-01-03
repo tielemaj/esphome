@@ -525,7 +525,7 @@ script:
             - valve.close: valve1
       - if:
           condition:
-            lambda: "return id(valve1).position != VALVE_CLOSED;"
+            lambda: "return id(valve2).position != VALVE_CLOSED;"
           then:
             - valve.close: valve2
       - if:
