@@ -14,7 +14,10 @@ packages:
   # ---------------------------------------------------------------------------
   # Board
   # ---------------------------------------------------------------------------
-  board: !include boards/esp8266/SonOff_S26.yaml
+  board: !include
+    file: boards/esp8266/SonOff_S26.yaml
+    vars:
+      restorefromflash: true
   settings: !include common/core/settings.yaml
 
   # ---------------------------------------------------------------------------
@@ -42,3 +45,6 @@ captive_portal: !remove
 # -----------------------------------------------------------------------------
 # Switches
 # -----------------------------------------------------------------------------
+switch:
+  - id: !extend "relay"
+    restore_mode: RESTORE_DEFAULT_OFF
