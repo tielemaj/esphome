@@ -6,7 +6,7 @@ substitutions:
   device_friendly_name: SprinklersGrootKot
   device_wifi_name: SprinklersGrootKot
   device_sampling_time: 60s
-  valve_change_duration: 28s
+  valve_change_duration: 30s
 
 # -----------------------------------------------------------------------------
 # Common Packages
@@ -61,77 +61,77 @@ mcp23017:
 # Switches
 # -----------------------------------------------------------------------------
 switch:
-  - platform: gpio
-    name: "Open Valve 1"
-    id: relay1
-    internal: True
-    pin:
-      mcp23xxx: mcp23017_hub
-      # Use pin B0
-      number: 8
-      mode:
-        output: true
-      inverted: true
+  # - platform: gpio
+  #   name: "Open Valve 1"
+  #   id: relay1
+  #   internal: True
+  #   pin:
+  #     mcp23xxx: mcp23017_hub
+  #     # Use pin B0
+  #     number: 8
+  #     mode:
+  #       output: true
+  #     inverted: true
 
-  - platform: gpio
-    name: "Close Valve 1"
-    id: relay2
-    internal: True
-    pin:
-      mcp23xxx: mcp23017_hub
-      # Use pin B1
-      number: 9
-      mode:
-        output: true
-      inverted: true
+  # - platform: gpio
+  #   name: "Close Valve 1"
+  #   id: relay2
+  #   internal: True
+  #   pin:
+  #     mcp23xxx: mcp23017_hub
+  #     # Use pin B1
+  #     number: 9
+  #     mode:
+  #       output: true
+  #     inverted: true
 
-  - platform: gpio
-    name: "Open Valve 2"
-    id: relay3
-    internal: True
-    pin:
-      mcp23xxx: mcp23017_hub
-      # Use pin B2
-      number: 10
-      mode:
-        output: true
-      inverted: true
+  # - platform: gpio
+  #   name: "Open Valve 2"
+  #   id: relay3
+  #   internal: True
+  #   pin:
+  #     mcp23xxx: mcp23017_hub
+  #     # Use pin B2
+  #     number: 10
+  #     mode:
+  #       output: true
+  #     inverted: true
 
-  - platform: gpio
-    name: "Close Valve 2"
-    id: relay4
-    internal: True
-    pin:
-      mcp23xxx: mcp23017_hub
-      # Use pin B3
-      number: 11
-      mode:
-        output: true
-      inverted: true
+  # - platform: gpio
+  #   name: "Close Valve 2"
+  #   id: relay4
+  #   internal: True
+  #   pin:
+  #     mcp23xxx: mcp23017_hub
+  #     # Use pin B3
+  #     number: 11
+  #     mode:
+  #       output: true
+  #     inverted: true
 
-  - platform: gpio
-    name: "Open Valve 3"
-    id: relay5
-    internal: True
-    pin:
-      mcp23xxx: mcp23017_hub
-      # Use pin B4
-      number: 12
-      mode:
-        output: true
-      inverted: true
+  # - platform: gpio
+  #   name: "Open Valve 3"
+  #   id: relay5
+  #   internal: True
+  #   pin:
+  #     mcp23xxx: mcp23017_hub
+  #     # Use pin B4
+  #     number: 12
+  #     mode:
+  #       output: true
+  #     inverted: true
 
-  - platform: gpio
-    name: "Close Valve 3"
-    id: relay6
-    internal: True
-    pin:
-      mcp23xxx: mcp23017_hub
-      # Use pin B5
-      number: 13
-      mode:
-        output: true
-      inverted: true
+  # - platform: gpio
+  #   name: "Close Valve 3"
+  #   id: relay6
+  #   internal: True
+  #   pin:
+  #     mcp23xxx: mcp23017_hub
+  #     # Use pin B5
+  #     number: 13
+  #     mode:
+  #       output: true
+  #     inverted: true
 
   - platform: gpio
     name: "Relay 7"
@@ -157,6 +157,66 @@ switch:
         output: true
       inverted: true
 
+  - platform: hbridge
+    id: control_valve_1
+    name: "Valve 1"
+    on_pin: 
+      mcp23xxx: mcp23017_hub
+      # Use pin B0
+      number: 8
+      mode:
+        output: true
+      inverted: true
+    off_pin: 
+      mcp23xxx: mcp23017_hub
+      # Use pin B1
+      number: 9
+      mode:
+        output: true
+      inverted: true
+    pulse_length: ${valve_change_duration} 
+    wait_time: 1s
+
+  - platform: hbridge
+    id: control_valve_2
+    name: "Valve 2"
+    on_pin: 
+      mcp23xxx: mcp23017_hub
+      # Use pin B2
+      number: 10
+      mode:
+        output: true
+      inverted: true
+    off_pin: 
+      mcp23xxx: mcp23017_hub
+      # Use pin B3
+      number: 11
+      mode:
+        output: true
+      inverted: true
+    pulse_length: ${valve_change_duration} 
+    wait_time: 1s
+
+  - platform: hbridge
+    id: control_valve_3
+    name: "Valve 3"
+    on_pin: 
+      mcp23xxx: mcp23017_hub
+      # Use pin B4
+      number: 12
+      mode:
+        output: true
+      inverted: true
+    off_pin: 
+      mcp23xxx: mcp23017_hub
+      # Use pin B5
+      number: 13
+      mode:
+        output: true
+      inverted: true
+    pulse_length: ${valve_change_duration} 
+    wait_time: 1s
+
 # -----------------------------------------------------------------------------
 # Sprinklers
 # -----------------------------------------------------------------------------
@@ -166,7 +226,6 @@ sprinkler:
     auto_advance_switch: "GrootKot Sprinklers Auto Advance"
     reverse_switch: "GrootKot Sprinklers Reverse"
     valve_open_delay: 5s
-    valve_pulse_duration: ${valve_change_duration}  
     valves:
       - valve_switch: "Vogelkooi Lawn"
         enable_switch: "Enable Vogelkooi Lawn"
@@ -178,8 +237,7 @@ sprinkler:
           min_value: 5
           max_value: 90
           unit_of_measurement: min
-        valve_on_switch_id: relay1
-        valve_off_switch_id: relay2
+        valve_switch_id: control_valve_1
       - valve_switch: "Haag Lawn"
         enable_switch: "Enable Haag Lawn"
         run_duration_number:
@@ -190,8 +248,7 @@ sprinkler:
           min_value: 5
           max_value: 90
           unit_of_measurement: min
-        valve_on_switch_id: relay3
-        valve_off_switch_id: relay4
+        valve_switch_id: control_valve_2
       - valve_switch: "Zwembad Lawn"
         enable_switch: "Enable Zwembad Lawn"
         run_duration_number:
@@ -202,5 +259,4 @@ sprinkler:
           min_value: 5
           max_value: 90
           unit_of_measurement: min
-        valve_on_switch_id: relay5
-        valve_off_switch_id: relay6
+        valve_switch_id: control_valve_3

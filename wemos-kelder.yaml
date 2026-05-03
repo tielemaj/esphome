@@ -2,9 +2,9 @@
 # Substitution Variables
 # -----------------------------------------------------------------------------
 substitutions:
-  device_internal_name: wemosberging
-  device_friendly_name: WemosBerging
-  device_wifi_name: WemosBerging
+  device_internal_name: wemoskelder
+  device_friendly_name: Wemos Kelder
+  device_wifi_name: WemosKelder
   device_sampling_time: 60s
 
 # -----------------------------------------------------------------------------
@@ -14,7 +14,10 @@ packages:
   # ---------------------------------------------------------------------------
   # Board
   # ---------------------------------------------------------------------------
-  board: !include boards/esp8266/esp01_1m.yaml
+  board: !include
+    file: boards/esp8266/d1_mini.yaml
+    vars:
+      restorefromflash: true
   settings: !include common/core/settings.yaml
 
   # ---------------------------------------------------------------------------
@@ -24,30 +27,33 @@ packages:
   webserver: !include
     file: common/network/webserver.yaml
     vars:
-      version: 2
+      version: 3
 
 # -----------------------------------------------------------------------------
 # Custom Device Configuration
 # -----------------------------------------------------------------------------
 # status_led: !remove
-# i2c: !remove
-# uart: !remove
-# spi: !remove
+i2c: !remove
+uart: !remove
+spi: !remove
+one_wire:
+  - platform: gpio
+    pin: GPIO04
 
 # -----------------------------------------------------------------------------
 # Sensors
 # -----------------------------------------------------------------------------
 sensor:
-  - platform: dht
-    pin: GPIO2
-    model: DHT22
-    temperature:
-      name: "Berging Temperature"
-      accuracy_decimals: 1
-    humidity:
-      name: "Berging Humidity"
-      accuracy_decimals: 1
-    update_interval: 60s
+  - platform: dallas_temp
+    name: WwIn
+    index: 0
+#    address: 0x28CDF24592150247
+    update_interval: ${device_sampling_time}
+  - platform: dallas_temp
+    name: WwOut
+    index: 1
+#    address: 0x28A77A4592180237
+    update_interval: ${device_sampling_time}
 
 # -----------------------------------------------------------------------------
 # Binary Sensors
@@ -58,5 +64,29 @@ sensor:
 # -----------------------------------------------------------------------------
 switch:
   - platform: gpio
-    name: "Fan"
-    pin: GPIO5
+    id: pump
+    name: "Pump"
+    pin: GPIO16
+    inverted: true
+    restore_mode: RESTORE_DEFAULT_OFF
+
+# -----------------------------------------------------------------------------
+# Time
+# -----------------------------------------------------------------------------
+time:
+  - platform: sntp
+    id: my_time
+    timezone: "Europe/Brussels" # Set your timezone
+    on_time:
+      - seconds: 0
+        minutes: 0
+        hours: 9
+        days_of_week: MON-SUN
+        then:
+          - switch.turn_on: pump
+      - seconds: 0
+        minutes: 0
+        hours: 18
+        days_of_week: MON-SUN
+        then:
+          - switch.turn_off: pump

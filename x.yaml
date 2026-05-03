@@ -2,10 +2,10 @@
 # Substitution Variables
 # -----------------------------------------------------------------------------
 substitutions:
-  device_internal_name: wemosberging
-  device_friendly_name: WemosBerging
-  device_wifi_name: WemosBerging
-  device_sampling_time: 60s
+  device_internal_name: testes32s
+  device_friendly_name: testes32s
+  device_wifi_name: testes32s
+  device_sampling_time: 30s
 
 # -----------------------------------------------------------------------------
 # Common Packages
@@ -14,7 +14,7 @@ packages:
   # ---------------------------------------------------------------------------
   # Board
   # ---------------------------------------------------------------------------
-  board: !include boards/esp8266/esp01_1m.yaml
+  board: !include boards/esp32/esp32s.yaml
   settings: !include common/core/settings.yaml
 
   # ---------------------------------------------------------------------------
@@ -24,39 +24,40 @@ packages:
   webserver: !include
     file: common/network/webserver.yaml
     vars:
-      version: 2
+      version: 3
+  bluetooth: !include common/network/bluetooth_tracker.yaml
 
 # -----------------------------------------------------------------------------
 # Custom Device Configuration
 # -----------------------------------------------------------------------------
-# status_led: !remove
-# i2c: !remove
-# uart: !remove
-# spi: !remove
+
+# -----------------------------------------------------------------------------
+# Output
+# -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
 # Sensors
 # -----------------------------------------------------------------------------
-sensor:
-  - platform: dht
-    pin: GPIO2
-    model: DHT22
-    temperature:
-      name: "Berging Temperature"
-      accuracy_decimals: 1
-    humidity:
-      name: "Berging Humidity"
-      accuracy_decimals: 1
-    update_interval: 60s
 
 # -----------------------------------------------------------------------------
 # Binary Sensors
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
-# Switches
+# Switchs
 # -----------------------------------------------------------------------------
-switch:
-  - platform: gpio
-    name: "Fan"
-    pin: GPIO5
+
+# -----------------------------------------------------------------------------
+# Lights
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Scripts
+# -----------------------------------------------------------------------------
+
+esp32_ble_tracker:
+
+ble_client:
+  - mac_address: 28:68:47:EA:05:2F
+    id: itag_black
+    auto_connect: true

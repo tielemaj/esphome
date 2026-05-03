@@ -39,44 +39,10 @@ captive_portal:
 
 web_server:
   port: 80
-  
-sprinkler:
-  - id: lawn_sprinkler_ctrlr
-    main_switch: "${sprinklers}"
-    auto_advance_switch: "${sprinklers} Auto Advance"
-    reverse_switch: "${sprinklers} Reverse"
-    valve_open_delay: 5s
-    pump_start_pump_delay: ${valve_change_duration}  
-    pump_stop_valve_delay: ${valve_change_duration}       
-    valve_pulse_duration: ${valve_change_duration}  
-    valves:
-      - valve_switch: ${lawn1}
-        enable_switch: "Enable ${lawn1}"
-        pump_switch_id: relay5
-        run_duration_number:
-          id: run_duration_bomen
-          name: "Duurtijd ${lawn1}"
-          icon: "mdi:timer-outline"
-          initial_value: 30
-          min_value: 5
-          max_value: 90
-          unit_of_measurement: min
-        valve_on_switch_id: relay2
-        valve_off_switch_id: relay1
-      - valve_switch: ${lawn2}
-        enable_switch: "Enable ${lawn2}"
-        pump_switch_id: relay5
-        run_duration_number:
-          id: run_duration_terras
-          name: "Duurtijd ${lawn2}"
-          icon: "mdi:timer-outline"
-          initial_value: 30
-          min_value: 5
-          max_value: 90
-          unit_of_measurement: min
-        valve_on_switch_id: relay4
-        valve_off_switch_id: relay3
 
+# -----------------------------------------------------------------------------
+# Sensors
+# -----------------------------------------------------------------------------
 # Text sensors with general information.
 text_sensor:
   # Expose Uptime human readable
@@ -116,28 +82,14 @@ sensor:
                 (String(seconds) + "s")
               ).c_str();
 
-# 8 relay outputs, exposed as switches in Home Assistant
+# -----------------------------------------------------------------------------
+# Binary Sensors
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Switches
+# -----------------------------------------------------------------------------
 switch:
-  - platform: gpio
-    pin: GPIO16
-    name: Relay1
-    id: relay1
-    internal: True
-  - platform: gpio
-    pin: GPIO14
-    name: Relay2
-    id: relay2
-    internal: True
-  - platform: gpio
-    pin: GPIO12
-    name: Relay3
-    id: relay3
-    internal: True
-  - platform: gpio
-    pin: GPIO13
-    name: Relay4
-    id: relay4
-    internal: True
   - platform: gpio
     pin: GPIO15
     name: Pomp
@@ -153,4 +105,59 @@ switch:
   - platform: gpio
     pin: GPIO05
     name: Relay8
-    id: relay8    
+    id: relay8
+
+  - platform: hbridge
+    id: control_valve_1
+    name: "Valve 1"
+    on_pin: GPIO14
+    off_pin: GPIO16
+    pulse_length: ${valve_change_duration} 
+    wait_time: 1s
+    internal: True
+
+  - platform: hbridge
+    id: control_valve_2
+    name: "Valve 2"
+    on_pin: GPIO13
+    off_pin: GPIO12
+    pulse_length: ${valve_change_duration} 
+    wait_time: 1s
+    internal: True
+
+# -----------------------------------------------------------------------------
+# Sprinklers
+# -----------------------------------------------------------------------------
+sprinkler:
+  - id: lawn_sprinkler_ctrlr
+    main_switch: "${sprinklers}"
+    auto_advance_switch: "${sprinklers} Auto Advance"
+    reverse_switch: "${sprinklers} Reverse"
+    valve_open_delay: 5s
+    pump_start_pump_delay: ${valve_change_duration}  
+    pump_stop_valve_delay: ${valve_change_duration}       
+    valves:
+      - valve_switch: ${lawn1}
+        enable_switch: "Enable ${lawn1}"
+        pump_switch_id: relay5
+        run_duration_number:
+          id: run_duration_bomen
+          name: "Duurtijd ${lawn1}"
+          icon: "mdi:timer-outline"
+          initial_value: 30
+          min_value: 5
+          max_value: 90
+          unit_of_measurement: min
+        valve_switch_id: control_valve_1
+      - valve_switch: ${lawn2}
+        enable_switch: "Enable ${lawn2}"
+        pump_switch_id: relay5
+        run_duration_number:
+          id: run_duration_terras
+          name: "Duurtijd ${lawn2}"
+          icon: "mdi:timer-outline"
+          initial_value: 30
+          min_value: 5
+          max_value: 90
+          unit_of_measurement: min
+        valve_switch_id: control_valve_2

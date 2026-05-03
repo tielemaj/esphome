@@ -20,7 +20,9 @@ binary_sensor:
   - platform: gpio
     id: onboardbutton
     name: "onboardbutton"
-    pin: GPIO0
+    pin: 
+      number: GPIO0
+      ignore_strapping_warning: true
     filters:
       - invert:
 
@@ -28,8 +30,12 @@ sn74hc595:
   - id: sn74hc595_hub
     data_pin: GPIO14
     clock_pin: GPIO13
-    latch_pin: GPIO12
-    oe_pin: GPIO05
+    latch_pin:
+      number: GPIO12
+      ignore_strapping_warning: true
+    oe_pin:
+      number: GPIO05
+      ignore_strapping_warning: true
     sr_count: 2
 
 switch:
