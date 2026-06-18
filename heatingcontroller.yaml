@@ -425,13 +425,20 @@ script:
             switch.turn_off: ${pumpradiator}
       - if:
           condition:
-            and:
-              - switch.is_on: heatingrequestpelletburnernonradiators
-              - binary_sensor.is_on: pelletburnerready
+              or:
+                - lambda: "return id(heatpipesmode).state == 4;"
+                - lambda: "return id(heatpipesmode).state == 5;"
+                - lambda: "return id(heatpipesmode).state == 6;"
           then:
-            switch.turn_on: ${pumppool}
-          else:
-            switch.turn_off: ${pumppool}
+            - if:
+                condition:
+                  and:
+                    - switch.is_on: heatingrequestpelletburnernonradiators
+                    - binary_sensor.is_on: pelletburnerready
+                then:
+                  switch.turn_on: ${pumppool}
+                else:
+                  switch.turn_off: ${pumppool}
 
   - id: modechanged
     mode: restart
