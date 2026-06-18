@@ -80,7 +80,7 @@ time:
     on_time:
       - seconds: 0
         minutes: 0
-        hours: 9
+        hours: 10
         days_of_week: MON-SUN
         then:
           - switch.turn_on: pump
