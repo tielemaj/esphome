@@ -160,6 +160,7 @@ switch:
   - platform: hbridge
     id: control_valve_1
     name: "Valve 1"
+    internal: true
     on_pin: 
       mcp23xxx: mcp23017_hub
       # Use pin B0
@@ -180,6 +181,7 @@ switch:
   - platform: hbridge
     id: control_valve_2
     name: "Valve 2"
+    internal: true
     on_pin: 
       mcp23xxx: mcp23017_hub
       # Use pin B2
@@ -200,6 +202,7 @@ switch:
   - platform: hbridge
     id: control_valve_3
     name: "Valve 3"
+    internal: true
     on_pin: 
       mcp23xxx: mcp23017_hub
       # Use pin B4
