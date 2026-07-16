@@ -7,6 +7,7 @@ substitutions:
   device_wifi_name: SprinklersGrootKot
   device_sampling_time: 60s
   valve_change_duration: 30s
+  initial_runtime: 30
 
 # -----------------------------------------------------------------------------
 # Common Packages
@@ -236,7 +237,7 @@ sprinkler:
           id: run_duration_vogelkooi
           name: "Duurtijd Vogelkooi"
           icon: "mdi:timer-outline"
-          initial_value: 30
+          initial_value: ${initial_runtime}
           min_value: 5
           max_value: 90
           unit_of_measurement: min
@@ -247,7 +248,7 @@ sprinkler:
           id: run_duration_haag
           name: "Duurtijd Haag"
           icon: "mdi:timer-outline"
-          initial_value: 30
+          initial_value: ${initial_runtime}
           min_value: 5
           max_value: 90
           unit_of_measurement: min
@@ -258,7 +259,7 @@ sprinkler:
           id: run_duration_zwembad
           name: "Duurtijd Zwembad"
           icon: "mdi:timer-outline"
-          initial_value: 30
+          initial_value: ${initial_runtime}
           min_value: 5
           max_value: 90
           unit_of_measurement: min
