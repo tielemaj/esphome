@@ -6,6 +6,7 @@ substitutions:
   lawn2: "Sprinkler terras"
   run_duration: 1800s
   valve_change_duration: 30s
+  initial_runtime: 30
 
 esphome:
   name: ${device_id}
@@ -144,7 +145,7 @@ sprinkler:
           id: run_duration_bomen
           name: "Duurtijd ${lawn1}"
           icon: "mdi:timer-outline"
-          initial_value: 30
+          initial_value: ${initial_runtime}
           min_value: 5
           max_value: 90
           unit_of_measurement: min
@@ -156,7 +157,7 @@ sprinkler:
           id: run_duration_terras
           name: "Duurtijd ${lawn2}"
           icon: "mdi:timer-outline"
-          initial_value: 30
+          initial_value: ${initial_runtime}
           min_value: 5
           max_value: 90
           unit_of_measurement: min
