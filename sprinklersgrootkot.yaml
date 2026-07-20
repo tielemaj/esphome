@@ -7,7 +7,7 @@ substitutions:
   device_wifi_name: SprinklersGrootKot
   device_sampling_time: 60s
   valve_change_duration: 30s
-  initial_runtime: 30
+  initial_runtime: 40
 
 # -----------------------------------------------------------------------------
 # Common Packages
