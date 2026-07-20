@@ -1,0 +1,142 @@
+# -----------------------------------------------------------------------------
+# Substitution Variables
+# -----------------------------------------------------------------------------
+substitutions:
+  device_internal_name: wemosbureau
+  device_friendly_name: WemosBureau
+  device_wifi_name: WemosBureau
+  device_sampling_time: 60s
+
+# -----------------------------------------------------------------------------
+# Common Packages
+# -----------------------------------------------------------------------------
+packages:
+  # ---------------------------------------------------------------------------
+  # Board
+  # ---------------------------------------------------------------------------
+  board: !include boards/esp8266/d1_mini.yaml
+  settings: !include common/core/settings.yaml
+
+  # ---------------------------------------------------------------------------
+  # Network
+  # ---------------------------------------------------------------------------
+  wifi: !include common/network/wifi.yaml
+  webserver: !include
+    file: common/network/webserver.yaml
+    vars:
+      version: 3
+
+# -----------------------------------------------------------------------------
+# Custom Device Configuration
+# -----------------------------------------------------------------------------
+status_led: !remove
+i2c: !remove
+uart: !remove
+spi: !remove
+
+# -----------------------------------------------------------------------------
+# Sensors
+# -----------------------------------------------------------------------------
+sensor:
+  - platform: dht
+    pin: D7
+    model: DHT22
+    temperature:
+      name: "Temperature"
+      accuracy_decimals: 1
+    humidity:
+      name: "Humidity"
+      accuracy_decimals: 1
+    update_interval: ${device_sampling_time}
+
+  - platform: dht
+    pin: D2
+    model: DHT22
+    temperature:
+      name: "Kast Temperature"
+      accuracy_decimals: 1
+    humidity:
+      name: "Kast Humidity"
+      accuracy_decimals: 1
+    update_interval: ${device_sampling_time}
+
+    # RPM Signal from Fan                                                                                                                                                                                                                  
+  - platform: pulse_counter
+    pin:
+      number: D3
+    name: ${device_friendly_name} Fan1 Speed
+    id: fan1_pulse
+    unit_of_measurement: 'RPM'
+    filters:
+      - multiply: 0.5
+    count_mode:
+      rising_edge: INCREMENT
+      falling_edge: DISABLE
+    update_interval: 10s #${device_sampling_time}
+    
+    # RPM Signal from Fan                                                                                                                                                                                                                  
+  - platform: pulse_counter
+    pin:
+      number: D4
+    name: ${device_friendly_name} Fan2 Speed
+    id: fan2_pulse
+    unit_of_measurement: 'RPM'
+    filters:
+      - multiply: 0.5
+    count_mode:
+      rising_edge: INCREMENT
+      falling_edge: DISABLE
+    update_interval: 10s #${device_sampling_time}
+    
+# -----------------------------------------------------------------------------
+# Binary Sensors
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Switches
+# -----------------------------------------------------------------------------
+switch:
+  - platform: gpio
+    pin:
+      number: D1
+      inverted: false
+      mode: output
+    id: fanrelay
+    internal: true
+# -----------------------------------------------------------------------------
+# Fans
+# -----------------------------------------------------------------------------
+
+output:
+  - platform: esp8266_pwm
+    id: fan1_speed
+    pin: D5
+
+    # 25KHz is standard PC fan frequency, minimises buzzing                                                                                                                                                                              
+    frequency: 25kHz
+    max_power: 100%
+    min_power: 1%
+
+  - platform: esp8266_pwm
+    id: fan2_speed
+    pin: D6
+
+    # 25KHz is standard PC fan frequency, minimises buzzing                                                                                                                                                                              
+    frequency: 25kHz
+    max_power: 100%
+    min_power: 1%
+
+fan:
+  - platform: speed
+    output: fan1_speed
+    name: Fan1 Override Enable
+    id: fan1_toggle
+    speed_count: 100 # Maakt regeling van 1% tot 100% mogelijk
+
+  - platform: speed
+    output: fan2_speed
+    name: Fan2 Override Enable
+    id: fan2_toggle
+    speed_count: 100 # Maakt regeling van 1% tot 100% mogelijk
+
+          
