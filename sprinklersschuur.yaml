@@ -6,7 +6,7 @@ substitutions:
   lawn2: "Sprinkler terras"
   run_duration: 1800s
   valve_change_duration: 30s
-  initial_runtime: 30
+  initial_runtime: 40
 
 esphome:
   name: ${device_id}
