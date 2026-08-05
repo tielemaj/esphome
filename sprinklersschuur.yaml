@@ -4,6 +4,7 @@ substitutions:
   sprinklers: "Sprinkler Schuur"
   lawn1: "Sprinkler bomen"
   lawn2: "Sprinkler terras"
+  lawn3: "Sprinkler hondenhok"
   run_duration: 1800s
   valve_change_duration: 30s
   initial_runtime: 40
@@ -107,6 +108,9 @@ switch:
     pin: GPIO05
     name: Relay8
     id: relay8
+    on_state:
+      - then: 
+          - script.execute: activateValves
 
   - platform: hbridge
     id: control_valve_1
@@ -162,3 +166,25 @@ sprinkler:
           max_value: 90
           unit_of_measurement: min
         valve_switch_id: control_valve_2
+      - valve_switch: ${lawn3}
+        enable_switch: "Enable ${lawn3}"
+        run_duration_number:
+          id: run_duration_hondenhok
+          name: "Duurtijd ${lawn3}"
+          icon: "mdi:timer-outline"
+          initial_value: ${initial_runtime}
+          min_value: 5
+          max_value: 90
+          unit_of_measurement: min
+        valve_switch_id: relay8
+
+# -----------------------------------------------------------------------------
+# Scripts
+# -----------------------------------------------------------------------------
+script:
+  - id: activateValves
+    mode: restart
+    then:
+      - switch.turn_on: relay7
+      - delay: 5min
+      - switch.turn_off: relay7
