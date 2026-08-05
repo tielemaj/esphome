@@ -98,8 +98,8 @@ switch:
     id: relay5
   - platform: gpio
     pin: GPIO00
-    name: Relay6
-    id: relay6
+    name: ActivateValves
+    id: relayActivateValves
   - platform: gpio
     pin: GPIO04
     name: Relay7
@@ -178,7 +178,7 @@ sprinkler:
           name: "Duurtijd ${lawn3}"
           icon: "mdi:timer-outline"
           initial_value: ${initial_runtime}
-          min_value: 1
+          min_value: 5
           max_value: 90
           unit_of_measurement: min
         valve_switch_id: relay7
@@ -190,6 +190,6 @@ script:
   - id: activateValves
     mode: restart
     then:
-      - switch.turn_on: relay6
-      - delay: 5s
-      - switch.turn_off: relay6
+      - switch.turn_on: relayActivateValves
+      - delay: 5min
+      - switch.turn_off: relayActivateValves
