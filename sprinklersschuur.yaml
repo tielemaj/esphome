@@ -178,10 +178,10 @@ sprinkler:
           name: "Duurtijd ${lawn3}"
           icon: "mdi:timer-outline"
           initial_value: ${initial_runtime}
-          min_value: 5
+          min_value: 1
           max_value: 90
           unit_of_measurement: min
-        valve_switch_id: relay8
+        valve_switch_id: relay7
 
 # -----------------------------------------------------------------------------
 # Scripts
@@ -191,5 +191,5 @@ script:
     mode: restart
     then:
       - switch.turn_on: relay6
-      - delay: 5min
+      - delay: 5s
       - switch.turn_off: relay6
