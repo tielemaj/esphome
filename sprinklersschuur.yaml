@@ -108,6 +108,7 @@ switch:
     pin: GPIO05
     name: Relay8
     id: relay8
+    internal: true
     on_state:
       - then: 
           - script.execute: activateValves
