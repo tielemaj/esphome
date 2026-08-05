@@ -104,6 +104,10 @@ switch:
     pin: GPIO04
     name: Relay7
     id: relay7
+    internal: true
+    on_state:
+      - then: 
+          - script.execute: activateValves
   - platform: gpio
     pin: GPIO05
     name: Relay8
@@ -186,6 +190,6 @@ script:
   - id: activateValves
     mode: restart
     then:
-      - switch.turn_on: relay7
+      - switch.turn_on: relay6
       - delay: 5min
-      - switch.turn_off: relay7
+      - switch.turn_off: relay6
