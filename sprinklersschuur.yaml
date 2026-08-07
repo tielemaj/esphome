@@ -191,5 +191,5 @@ script:
     mode: restart
     then:
       - switch.turn_on: relayActivateValves
-      - delay: 5min
+      - delay: 60s
       - switch.turn_off: relayActivateValves
