@@ -252,7 +252,7 @@ sprinkler:
           min_value: 5
           max_value: 90
           unit_of_measurement: min
-        valve_switch_id: control_valve_2
+        valve_switch_id: control_valve_3
       - valve_switch: "Zwembad Lawn"
         enable_switch: "Enable Zwembad Lawn"
         run_duration_number:
@@ -263,4 +263,4 @@ sprinkler:
           min_value: 5
           max_value: 90
           unit_of_measurement: min
-        valve_switch_id: control_valve_3
+        valve_switch_id: control_valve_2
