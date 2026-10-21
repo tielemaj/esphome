@@ -212,6 +212,18 @@ binary_sensor:
       then:
         - script.execute: checkpelletburner
 
+  - platform: template
+    name: "Status Pump Pool" # Deze entiteit verschijnt in Home Assistant als read-only status
+    device_class: power   # Optioneel: zorgt voor een passend icoon in Home Assistant
+    lambda: |-
+      return id(${pumppool}).state;  
+      
+  - platform: template
+    name: "Status Pump Radiators" # Deze entiteit verschijnt in Home Assistant als read-only status
+    device_class: power   # Optioneel: zorgt voor een passend icoon in Home Assistant
+    lambda: |-
+      return id(${pumpradiator}).state;  
+      
   # - id: !extend "onboardbutton"
   #   on_click:
   #     then:
