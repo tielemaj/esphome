@@ -39,8 +39,38 @@ spi:
   #cs_pin: 
 
 # -----------------------------------------------------------------------------
+# Number
+# -----------------------------------------------------------------------------
+number:
+  - platform: template
+    name: LVGL Screen Timeout
+    id: display_timeout
+    unit_of_measurement: "s"
+    initial_value: 15
+    min_value: 10
+    max_value: 180
+    step: 5
+    mode: box
+    optimistic: true
+
+# -----------------------------------------------------------------------------
 # Output
 # -----------------------------------------------------------------------------
+output:
+  - platform: gpio
+    pin: GPIO15 
+    id: light_output_backlight
+    inverted: true
+
+# -----------------------------------------------------------------------------
+# Lights
+# -----------------------------------------------------------------------------
+light:
+  - platform: binary
+    output: light_output_backlight
+    id: displaybacklight
+    name: "Display Backlight"
+    restore_mode: ALWAYS_ON
 
 # -----------------------------------------------------------------------------
 # Sensors
@@ -64,13 +94,6 @@ sensor:
 # -----------------------------------------------------------------------------
 # Switchs
 # -----------------------------------------------------------------------------
-switch:
-  - platform: gpio
-    pin: GPIO15
-    id: displaybacklight
-    name: "Display Backlight"
-    restore_mode: ALWAYS_ON
-    inverted: true
 
 # -----------------------------------------------------------------------------
 # Display
@@ -115,11 +138,15 @@ touchscreen:
     swap_xy: false
     mirror_x: true
     mirror_y: false
-
-# -----------------------------------------------------------------------------
-# Lights
-# -----------------------------------------------------------------------------
-
+  on_release:
+    - if:
+        condition: lvgl.is_paused
+        then:
+          - logger.log: "LVGL resuming"
+          - lvgl.resume:
+          - lvgl.widget.redraw:
+          - light.turn_on: displaybacklight
+  
 # -----------------------------------------------------------------------------
 # Scripts
 # -----------------------------------------------------------------------------
@@ -139,6 +166,12 @@ ble_client:
 # -----------------------------------------------------------------------------
 lvgl:
   rotation: 90  # <-- Place rotation here
+  on_idle:
+    timeout: !lambda "return (id(display_timeout).state * 1000);"
+    then:
+      - logger.log: "LVGL is idle"
+      - light.turn_off: displaybacklight
+      - lvgl.pause:
   pages:
     - id: canvas_1
       bg_opa: 100%
