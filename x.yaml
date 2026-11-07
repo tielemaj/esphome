@@ -45,6 +45,17 @@ spi:
 # -----------------------------------------------------------------------------
 # Sensors
 # -----------------------------------------------------------------------------
+sensor:
+  - platform: homeassistant
+    id: tempPelletKetel
+    entity_id: sensor.pellematic_heater_1_temperature
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lblTempPellet
+            text:
+              format: "Temperatuur: %.1f °C"
+              args: [ 'id(sensor.pellematic_heater_1_temperature).state' ]
 
 # -----------------------------------------------------------------------------
 # Binary Sensors
@@ -154,16 +165,6 @@ lvgl:
                       value: 50
                       min_value: 0
                       max_value: 100
-                  - line:
-                      id: lv_line_3
-                      x: 34
-                      y: 75
-                      width: 200
-                      height: 100
-                      points:
-                        - 20, 50
-                        - 180, 50
-                      line_color: 0xFFFFFF
                   - button:
                       id: lv_button_4
                       x: 151
@@ -174,6 +175,14 @@ lvgl:
                         - label:
                             align: CENTER
                             text: "Button"
+                  - label:
+                      id: lblTempPellet
+                      x: 43
+                      y: 84
+                      width: 80
+                      height: 40
+                      text: "sdfs"
+                      text_color: 0xFFFFFF
               - name: Tab 2
                 scrollbar_mode: "OFF"
                 widgets:
@@ -198,3 +207,4 @@ lvgl:
                         - "Option 2"
                         - "Option 3"
                       selected_index: 0
+# <<< end LVGL Designer block <<<
