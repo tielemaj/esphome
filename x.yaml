@@ -59,6 +59,7 @@ switch:
     id: displaybacklight
     name: "Display Backlight"
     restore_mode: ALWAYS_ON
+    inverted: true
 
 # -----------------------------------------------------------------------------
 # Display
