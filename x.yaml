@@ -261,28 +261,6 @@ lvgl:
       - light.turn_off: displaybacklight
       - lvgl.pause:
   pages:
-    - id: page_ota
-      widgets:
-        - obj:
-            id: ota_box
-            hidden: true
-            align: center
-            width: 90%
-            height: 120
-            widgets:
-              - label:
-                  id: ota_label
-                  align: top_mid
-                  text: "Updating..."
-              - bar:
-                  id: ota_bar
-                  align: bottom_mid
-                  width: 100%
-                  height: 24
-                  min_value: 0
-                  max_value: 100
-                  value: 0
-
     - id: page1
       bg_opa: 100%
       pad_all: 0
@@ -348,3 +326,25 @@ lvgl:
                         - "Option 2"
                         - "Option 3"
                       selected_index: 0
+    - id: page_ota
+      widgets:
+        - obj:
+            id: ota_box
+            hidden: true
+            align: center
+            width: 90%
+            height: 120
+            widgets:
+              - label:
+                  id: ota_label
+                  align: top_mid
+                  text: "Updating..."
+              - bar:
+                  id: ota_bar
+                  align: bottom_mid
+                  width: 100%
+                  height: 24
+                  min_value: 0
+                  max_value: 100
+                  value: 0
+                      
