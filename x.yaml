@@ -78,10 +78,10 @@ display:
     reset_pin: GPIO22
     color_depth: 8bit       # Voorkomt geheugencrashes (16bit kan mits PSRAM)
     rotation: 90
-    lambda: |-
-      // Print the string "Hello World!" at [0,10]
-      it.line(0, 0, 50, 50);
-      it.print(0, 10, id(my_font), "Hello World!");
+#    lambda: |-
+#      // Print the string "Hello World!" at [0,10]
+#      it.line(0, 0, 50, 50);
+#      it.print(0, 10, id(my_font), "Hello World!");
 
 # -----------------------------------------------------------------------------
 # Touchscreen
