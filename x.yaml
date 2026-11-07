@@ -55,7 +55,7 @@ sensor:
             id: lblTempPellet
             text:
               format: "Temperatuur: %.1f °C"
-              args: [ 'id(sensor.pellematic_heater_1_temperature).state' ]
+              args: [ 'x' ]
 
 # -----------------------------------------------------------------------------
 # Binary Sensors
