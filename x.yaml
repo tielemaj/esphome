@@ -74,11 +74,10 @@ display:
     cs_pin: GPIO05
     reset_pin: GPIO22
     rotation: 90
-    
-#    lambda: |-
-#      // Print the string "Hello World!" at [0,10]
-#      it.line(0, 0, 50, 50);
-#      it.print(0, 10, id(my_font), "Hello World!");
+    lambda: |-
+      // Print the string "Hello World!" at [0,10]
+      it.line(0, 0, 50, 50);
+      it.print(0, 10, id(my_font), "Hello World!");
 
 # -----------------------------------------------------------------------------
 # Lights
