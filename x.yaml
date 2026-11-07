@@ -27,6 +27,11 @@ packages:
       version: 3
   bluetooth: !include common/network/bluetooth_tracker.yaml
 
+esphome:
+  on_boot:
+    - delay: 5s
+    - lvgl.page.show: page1
+  
 ota:
   - platform: esphome
     on_begin:
@@ -278,7 +283,7 @@ lvgl:
                   max_value: 100
                   value: 0
 
-    - id: canvas_1
+    - id: page1
       bg_opa: 100%
       pad_all: 0
       scrollbar_mode: "OFF"
