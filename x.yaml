@@ -71,13 +71,14 @@ font:
 
 display:
   - platform: mipi_spi
+    id: my_display
     model: ILI9341
     spi_id: lcd_spi
     dc_pin: GPIO4
     cs_pin: GPIO5
     reset_pin: GPIO22
     color_depth: 8bit       # Voorkomt geheugencrashes (16bit kan mits PSRAM)
-    rotation: 90
+#    rotation: 90
 #    lambda: |-
 #      // Print the string "Hello World!" at [0,10]
 #      it.line(0, 0, 50, 50);
@@ -88,7 +89,6 @@ display:
 # -----------------------------------------------------------------------------
 touchscreen:
   platform: xpt2046
-  id: my_touchscreen
   cs_pin: GPIO14
   interrupt_pin: GPIO2
   update_interval: 50ms
@@ -120,6 +120,7 @@ ble_client:
     auto_connect: true
 
 # -----------------------------------------------------------------------------
-# Bluetooth
+# Lvgl
 # -----------------------------------------------------------------------------
-    
+lvgl:
+  rotation: 90  # <-- Place rotation here
