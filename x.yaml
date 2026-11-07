@@ -37,6 +37,13 @@ ota:
     on_begin:
       - lvgl.page.show: page_ota
       - lvgl.widget.show: ota_box
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - logger.log: "LVGL resuming"
+            - lvgl.resume:
+            - lvgl.widget.redraw:
+            - light.turn_on: displaybacklight
       - lvgl.label.update:
           id: ota_label
           text: "Updating..."
