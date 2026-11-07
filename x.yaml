@@ -102,6 +102,8 @@ touchscreen:
     y_max: 3830
   transform:
     swap_xy: false
+    mirror_x: true
+    mirror_y: false
 
 # -----------------------------------------------------------------------------
 # Lights
