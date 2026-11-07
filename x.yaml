@@ -77,7 +77,7 @@ display:
     dc_pin: GPIO4
     cs_pin: GPIO5
     reset_pin: GPIO22
-    color_depth: 8bit       # Voorkomt geheugencrashes (16bit kan mits PSRAM)
+    #color_depth: 8bit       # Voorkomt geheugencrashes (16bit kan mits PSRAM)
 #    rotation: 90
 #    lambda: |-
 #      // Print the string "Hello World!" at [0,10]
@@ -124,3 +124,43 @@ ble_client:
 # -----------------------------------------------------------------------------
 lvgl:
   rotation: 90  # <-- Place rotation here
+  pages:
+    - id: canvas_1
+      bg_opa: 100%
+      pad_all: 0
+      scrollbar_mode: "OFF"
+      widgets:
+        - tabview:
+            id: lv_tabview_1
+            x: 0
+            y: 0
+            width: 320
+            height: 240
+            align: TOP_LEFT
+            tabs:
+              - name: Tab 1
+                scrollbar_mode: "OFF"
+                widgets:
+                  - bar:
+                      id: lv_bar_2
+                      x: 34
+                      y: 45
+                      width: 200
+                      height: 30
+                      value: 50
+                      min_value: 0
+                      max_value: 100
+                  - line:
+                      id: lv_line_3
+                      x: 34
+                      y: 75
+                      width: 200
+                      height: 100
+                      points:
+                        - 20, 50
+                        - 180, 50
+                      line_color: 0xFFFFFF
+              - name: Tab 2
+                scrollbar_mode: "OFF"
+              - name: Tab 3
+                scrollbar_mode: "OFF"  
