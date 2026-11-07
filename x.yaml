@@ -164,7 +164,37 @@ lvgl:
                         - 20, 50
                         - 180, 50
                       line_color: 0xFFFFFF
+                  - button:
+                      id: lv_button_4
+                      x: 151
+                      y: 140
+                      width: 100
+                      height: 40
+                      widgets:
+                        - label:
+                            align: CENTER
+                            text: "Button"
               - name: Tab 2
                 scrollbar_mode: "OFF"
+                widgets:
+                  - checkbox:
+                      id: lv_checkbox_5
+                      x: 101
+                      y: 72
+                      text: "Checkbox"
+                      pad_column: 10
+                      text_color: 0xFFFFFF
               - name: Tab 3
-                scrollbar_mode: "OFF"  
+                scrollbar_mode: "OFF"
+                widgets:
+                  - dropdown:
+                      id: lv_dropdown_6
+                      x: 125
+                      y: 73
+                      width: 150
+                      height: 40
+                      options:
+                        - "Option 1"
+                        - "Option 2"
+                        - "Option 3"
+                      selected_index: 0
