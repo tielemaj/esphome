@@ -72,7 +72,7 @@ display:
     model: ILI9341
     dc_pin: GPIO4
     cs_pin: GPIO5
-    reset_pin: GPIO22
+    #reset_pin: GPIO22
     rotation: 90
     lambda: |-
       // Print the string "Hello World!" at [0,10]
