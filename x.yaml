@@ -101,7 +101,7 @@ touchscreen:
     y_min: 280
     y_max: 3830
   transform:
-    swap_xy: false
+    swap_xy: true
 
 # -----------------------------------------------------------------------------
 # Lights
