@@ -86,7 +86,7 @@ touchscreen:
   platform: xpt2046
   id: my_touchscreen
   cs_pin: GPIO14
-  interrupt_pin: GPIO2
+  #interrupt_pin: GPIO2
   update_interval: 50ms
   threshold: 400
 #  transform:
