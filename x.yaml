@@ -27,6 +27,45 @@ packages:
       version: 3
   bluetooth: !include common/network/bluetooth_tracker.yaml
 
+ota:
+  - platform: esphome
+    on_begin:
+      - lvgl.page.show: page_ota
+      - lvgl.widget.show: ota_box
+      - lvgl.label.update:
+          id: ota_label
+          text: "Updating..."
+      - lvgl.bar.update:
+          id: ota_bar
+          value: 0
+      - lambda: id(lvgl_id).loop();
+    on_progress:
+      - lvgl.bar.update:
+          id: ota_bar
+          value: !lambda return x;
+      - lvgl.label.update:
+          id: ota_label
+          text:
+            format: "Updating... %.0f%%"
+            args: [x]
+      - lambda: id(lvgl_id).loop();
+    on_end:
+      - lvgl.bar.update:
+          id: ota_bar
+          value: 100
+      - lvgl.label.update:
+          id: ota_label
+          text: "Update complete, rebooting"
+      - lambda: id(lvgl_id).loop();
+    on_error:
+      - lvgl.label.update:
+          id: ota_label
+          text:
+            format: "Update failed (error %u)"
+            args: [x]
+      - lambda: id(lvgl_id).loop();
+    password: TesterkeX25
+  
 # -----------------------------------------------------------------------------
 # Custom Device Configuration
 # -----------------------------------------------------------------------------
@@ -63,6 +102,26 @@ output:
     inverted: true
 
 # -----------------------------------------------------------------------------
+# Time
+# -----------------------------------------------------------------------------
+time:
+  - platform: sntp
+    on_time:
+      - hours: 2,3,4,5
+        minutes: 5
+        seconds: 0
+        then:
+          - switch.turn_on: switch_antiburn
+      - hours: 2,3,4,5
+        minutes: 35
+        seconds: 0
+        then:
+          - switch.turn_off: switch_antiburn
+    on_time_sync:
+      then:
+        - logger.log: "Synchronized system clock"
+
+# -----------------------------------------------------------------------------
 # Lights
 # -----------------------------------------------------------------------------
 light:
@@ -94,6 +153,29 @@ sensor:
 # -----------------------------------------------------------------------------
 # Switchs
 # -----------------------------------------------------------------------------
+switch:
+  - platform: template
+    name: Antiburn
+    id: switch_antiburn
+    icon: mdi:television-shimmer
+    optimistic: true
+    entity_category: "config"
+    turn_on_action:
+      - logger.log: "Starting Antiburn"
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - lvgl.resume:
+            - lvgl.widget.redraw:
+      - lvgl.pause:
+          show_snow: true
+    turn_off_action:
+      - logger.log: "Stopping Antiburn"
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - lvgl.resume:
+            - lvgl.widget.redraw:
 
 # -----------------------------------------------------------------------------
 # Display
@@ -165,6 +247,7 @@ ble_client:
 # Lvgl
 # -----------------------------------------------------------------------------
 lvgl:
+  id: lvgl_id
   rotation: 90  # <-- Place rotation here
   on_idle:
     timeout: !lambda "return (id(display_timeout).state * 1000);"
@@ -173,6 +256,28 @@ lvgl:
       - light.turn_off: displaybacklight
       - lvgl.pause:
   pages:
+    - id: page_ota
+      widgets:
+        - obj:
+            id: ota_box
+            hidden: true
+            align: center
+            width: 90%
+            height: 120
+            widgets:
+              - label:
+                  id: ota_label
+                  align: top_mid
+                  text: "Updating..."
+              - bar:
+                  id: ota_bar
+                  align: bottom_mid
+                  width: 100%
+                  height: 24
+                  min_value: 0
+                  max_value: 100
+                  value: 0
+
     - id: canvas_1
       bg_opa: 100%
       pad_all: 0
