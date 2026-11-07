@@ -182,7 +182,6 @@ lvgl:
                       width: 80
                       height: 40
                       text: "sdfs"
-                      text_color: 0xFFFFFF
               - name: Tab 2
                 scrollbar_mode: "OFF"
                 widgets:
@@ -192,7 +191,6 @@ lvgl:
                       y: 72
                       text: "Checkbox"
                       pad_column: 10
-                      text_color: 0xFFFFFF
               - name: Tab 3
                 scrollbar_mode: "OFF"
                 widgets:
@@ -207,4 +205,3 @@ lvgl:
                         - "Option 2"
                         - "Option 3"
                       selected_index: 0
-# <<< end LVGL Designer block <<<
