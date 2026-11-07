@@ -70,14 +70,32 @@ font:
 display:
   - platform: mipi_spi
     model: ILI9341
-    dc_pin: GPIO04
-    cs_pin: GPIO05
+    dc_pin: GPIO4
+    cs_pin: GPIO5
     reset_pin: GPIO22
     rotation: 90
     lambda: |-
       // Print the string "Hello World!" at [0,10]
       it.line(0, 0, 50, 50);
       it.print(0, 10, id(my_font), "Hello World!");
+
+# -----------------------------------------------------------------------------
+# Touchscreen
+# -----------------------------------------------------------------------------
+touchscreen:
+  platform: xpt2046
+  id: my_touchscreen
+  cs_pin: GPIO14
+  interrupt_pin: GPIO2
+  update_interval: 50ms
+  threshold: 400
+#  transform:
+#    mirror_x: true
+  calibration:
+    x_min: 220
+    x_max: 3800
+    y_min: 280
+    y_max: 3830
 
 # -----------------------------------------------------------------------------
 # Lights
