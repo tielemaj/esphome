@@ -208,12 +208,21 @@ switch:
             - lvgl.widget.redraw:
 
 # -----------------------------------------------------------------------------
+# Fonts
+# -----------------------------------------------------------------------------
+font:
+  - file: "https://github.com/Templarian/MaterialDesign-Webfont/raw/v7.4.47/fonts/materialdesignicons-webfont.ttf"
+    id: mdi_font
+    size: 32
+    bpp: 4 # Anti-aliasing instelling (1 tot 8). 4 of 8 geeft mooie ronde randen.
+    glyphs:
+      - "\U000F050F" # mdi:thermometer
+      - "\U000F0493" # mdi:cog
+      #- "\U000F04B0" # mdi-play (Afspelen)
+                
+# -----------------------------------------------------------------------------
 # Display
 # -----------------------------------------------------------------------------
-#font:
-#  - file: "gfonts://Roboto"
-#    id: my_font
-#    size: 20
 display:
   - platform: mipi_spi
     id: my_display
@@ -278,6 +287,8 @@ lvgl:
       - logger.log: "LVGL is idle"
       - light.turn_off: displaybacklight
       - lvgl.pause:
+  theme:
+    dark_mode: true
   top_layer:
     scrollbar_mode: "OFF"
     widgets:
@@ -364,10 +375,11 @@ lvgl:
             y: 20
             width: 280
             height: 180
+            text_font: mdi_font
             rows:
               - buttons:
                   - id: btn_settings
-                    text: "\uF013"
+                    text: "\U000F0493"
                     on_press:
                       then:
                         lvgl.page.show: pagesettings
@@ -376,8 +388,8 @@ lvgl:
                   - id: btn_3
                     text: "Btn 3"
               - buttons:
-                  - id: btn_4
-                    text: "Btn 4"
+                  - id: btn_4                    
+                    text: "\U000F050F"
                   - id: btn_5
                     text: "Btn 5"
                   - id: btn_6
