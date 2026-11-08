@@ -1,0 +1,70 @@
+# -----------------------------------------------------------------------------
+# Substitution Variables
+# -----------------------------------------------------------------------------
+substitutions:
+  device_internal_name: gatecontroller
+  device_friendly_name: GateController
+  device_wifi_name: GateController
+  device_sampling_time: 60s
+
+# -----------------------------------------------------------------------------
+# Common Packages
+# -----------------------------------------------------------------------------
+packages:
+  # ---------------------------------------------------------------------------
+  # Board
+  # ---------------------------------------------------------------------------
+  board: !include boards/esp8266/d1_mini.yaml
+  settings: !include common/core/settings.yaml
+
+  # ---------------------------------------------------------------------------
+  # Network
+  # ---------------------------------------------------------------------------
+  wifi: !include common/network/wifi.yaml
+  webserver: !include
+    file: common/network/webserver.yaml
+    vars:
+      version: 3
+
+# -----------------------------------------------------------------------------
+# Custom Device Configuration
+# -----------------------------------------------------------------------------
+i2c:
+  sda: GPIO04
+  scl: GPIO05
+  scan: true
+  id: bus_a
+
+mcp23017:
+  - id: 'mcpRelays'
+    address: 0x01
+
+  - id: 'mcpInputs'
+    address: 0x00
+
+# -----------------------------------------------------------------------------
+# Sensors
+# -----------------------------------------------------------------------------
+#sensor:
+#  - platform: dht
+#    pin: GPIO2
+#    model: DHT22
+#    temperature:
+#      name: "Berging Temperature"
+#      accuracy_decimals: 1
+#    humidity:
+#      name: "Berging Humidity"
+#      accuracy_decimals: 1
+#    update_interval: 60s
+
+# -----------------------------------------------------------------------------
+# Binary Sensors
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Switches
+# -----------------------------------------------------------------------------
+#switch:
+#  - platform: gpio
+#    name: "Fan"
+#    pin: GPIO5

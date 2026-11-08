@@ -16,3 +16,4 @@ web_server:
     password: !secret web_server_password
     type: digest
   local: false
+  ota: false
