@@ -207,6 +207,15 @@ switch:
             - lvgl.resume:
             - lvgl.widget.redraw:
 
+  - platform: homeassistant
+    id: ha_read_hp
+    entity_id: input_boolean.read_heat_pump
+    on_state:
+      - lvgl.widget.update: 
+          id: lv_cb_read_hp
+          state:
+            checked: !lambda return id(ha_read_hp).state;
+            
 # -----------------------------------------------------------------------------
 # Fonts
 # -----------------------------------------------------------------------------
