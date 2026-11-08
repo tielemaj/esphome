@@ -451,7 +451,7 @@ lvgl:
 #                  x: 0
 #                  y: 0
 #                  width: 280
-#                  height: 60
+                  height: 60
                   pad_all: 0
                   grid_cell_x_align: STRETCH
                   widgets:
@@ -488,7 +488,7 @@ lvgl:
 #                  x: 10
 #                  y: 65
 #                  width: 280
-#                  height: 30
+                  height: 30
                   pad_all: 0
                   grid_cell_x_align: STRETCH
                   widgets:
