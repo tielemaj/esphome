@@ -400,9 +400,12 @@ lvgl:
                     text: "\U000F0493"
                     on_press:
                       then:
-                        lvgl.page.show: pagesettings                        
+                        lvgl.page.show: pagesettings
                   - id: btn_heatpump
                     text: "\U000F1A43"
+                    on_press:
+                      then:
+                        lvgl.page.show: pagewarmtepomp
                   - id: btn_pool
                     text: "\U000F0606"
               - buttons:
@@ -448,9 +451,6 @@ lvgl:
             widgets:
               - obj:
                   id: lv_obj_slidertimeout
-#                  x: 0
-#                  y: 0
-#                  width: 280
                   height: 60
                   pad_all: 0
                   grid_cell_x_align: STRETCH
@@ -485,9 +485,6 @@ lvgl:
                         text: ""
               - obj:
                   id: lv_obj_25
-#                  x: 10
-#                  y: 65
-#                  width: 280
                   height: 30
                   pad_all: 0
                   grid_cell_x_align: STRETCH
@@ -503,3 +500,75 @@ lvgl:
                         pad_column: 10
                         on_click:
                           - switch.toggle: ha_read_hp
+    - id: pagewarmtepomp
+      bg_color: 0x000000
+      pad_all: 0
+      scrollbar_mode: "OFF"
+      widgets:
+        - obj:
+            id: lv_hp_temp_vv
+            x: 10
+            y: 33
+            width: 300
+            height: 175
+            shadow_width: 8
+            shadow_color: 0x000000
+            pad_all: 5
+            layout:
+              type: GRID
+              grid_rows: [CONTENT, CONTENT]
+              grid_columns: [FR(1)]
+            widgets:
+              - obj:
+                  id: lv_obj_26
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_label_29
+                        x: 0
+                        y: 0
+                        text: "Vloerverwarming"
+                    - label:
+                        id: widget_1794163680632_5aqhzki4q
+                        x: 150
+                        y: 0
+                        text: "10 °C"
+              - obj:
+                  id: lv_obj_27
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_label_28
+                        x: 0
+                        y: 0
+                        text: "Sanitair water"
+                    - label:
+                        id: lv_hp_temp_san
+                        x: 150
+                        y: 0
+                        text: "10 °C"
+
+        - obj:
+            id: widget_1794163868311_09sez14p8
+            x: 0
+            y: 0
+            width: 280
+            height: 25
+            align: TOP_MID
+            pad_all: 0
+            widgets:
+              - label:
+                  id: widget_1794163868311_xw9b89wy9
+                  x: 0
+                  y: 0
+                  width: 240
+                  height: 20
+                  align: TOP_MID
+                  text: "Warmtepomp"
+                  text_align: CENTER
