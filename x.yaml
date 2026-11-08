@@ -35,7 +35,6 @@ esphome:
 ota:
   - platform: esphome
     on_begin:
-      - lvgl.page.show: page_ota
       - lvgl.widget.show: ota_box
       - if:
           condition: 
@@ -162,13 +161,13 @@ sensor:
   - platform: homeassistant
     id: tempPelletKetel
     entity_id: sensor.pellematic_heater_1_temperature
-    on_value:
-      then:
-        - lvgl.label.update: 
-            id: lblTempPellet
-            text:
-              format: "Temperatuur: %.1f °C"
-              args: [ 'x' ]
+#    on_value:
+#      then:
+#        - lvgl.label.update: 
+#            id: lblTempPellet
+#            text:
+#              format: "Temperatuur: %.1f °C"
+#              args: [ 'x' ]
 
 # -----------------------------------------------------------------------------
 # Binary Sensors
@@ -350,81 +349,59 @@ lvgl:
                 text: "\uF015"
                 on_press:
                   then:
-                    lvgl.page.show: page_home
+                    lvgl.page.show: pagehome
               - id: page_next
                 text: "\uF054"
                 on_press:
                   then:
-                    lvgl.page.next:	  
+                    lvgl.page.next:
   pages:
-    - id: pageBoot
+    - id: pagehome
       widgets:
-    - id: page1
-      bg_opa: 100%
+        - buttonmatrix:
+            id: lv_buttonmatrix_13
+            x: 20
+            y: 20
+            width: 280
+            height: 180
+            rows:
+              - buttons:
+                  - id: btn_settings
+                    text: "\uF013"
+                    on_press:
+                      then:
+                        lvgl.page.show: pagesettings
+                  - id: btn_2
+                    text: "Btn 2"
+                  - id: btn_3
+                    text: "Btn 3"
+              - buttons:
+                  - id: btn_4
+                    text: "Btn 4"
+                  - id: btn_5
+                    text: "Btn 5"
+                  - id: btn_6
+                    text: "Btn 6"        
+    - id: pagesettings
       pad_all: 0
       scrollbar_mode: "OFF"
       widgets:
-        - tabview:
-            id: lv_tabview_1
-            x: 0
-            y: 0
-            width: 320
-            height: 240
-            align: TOP_LEFT
-            tabs:
-              - name: Tab 1
-                scrollbar_mode: "OFF"
-                widgets:
-                  - bar:
-                      id: lv_bar_2
-                      x: 34
-                      y: 45
-                      width: 200
-                      height: 30
-                      value: 50
-                      min_value: 0
-                      max_value: 100
-                  - button:
-                      id: lv_button_4
-                      x: 151
-                      y: 140
-                      width: 100
-                      height: 40
-                      widgets:
-                        - label:
-                            align: CENTER
-                            text: "Button"
-                  - label:
-                      id: lblTempPellet
-                      x: 43
-                      y: 84
-                      width: 80
-                      height: 40
-                      text: "sdfs"
-              - name: Tab 2
-                scrollbar_mode: "OFF"
-                widgets:
-                  - checkbox:
-                      id: lv_checkbox_5
-                      x: 101
-                      y: 72
-                      text: "Checkbox"
-                      pad_column: 10
-              - name: Tab 3
-                scrollbar_mode: "OFF"
-                widgets:
-                  - dropdown:
-                      id: lv_dropdown_6
-                      x: 125
-                      y: 73
-                      width: 150
-                      height: 40
-                      options:
-                        - "Option 1"
-                        - "Option 2"
-                        - "Option 3"
-                      selected_index: 0
-    - id: page_ota
-      widgets:
-
-                      
+        - obj:
+            id: lv_obj_slider
+            x: 20
+            y: 20
+            width: 280
+            height: 50
+            pad_all: 0
+            widgets:
+              - slider:
+                  id: lv_slider_14
+                  x: 0
+                  y: 0
+                  width: 200
+                  height: 20
+                  align: CENTER
+                  value: 15
+                  min_value: 10
+                  max_value: 180
+                  radius: 9999
