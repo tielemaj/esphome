@@ -92,18 +92,25 @@ spi:
 # -----------------------------------------------------------------------------
 # Number
 # -----------------------------------------------------------------------------
+#number:
+#  - platform: template
+#    name: LVGL Screen Timeout
+#    id: display_timeout
+#    unit_of_measurement: "s"
+#    initial_value: 15
+#    min_value: 10
+#    max_value: 180
+#    step: 5
+#    mode: box
+#    optimistic: true
 number:
-  - platform: template
-    name: LVGL Screen Timeout
+  - platform: lvgl
     id: display_timeout
-    unit_of_measurement: "s"
-    initial_value: 15
-    min_value: 10
-    max_value: 180
-    step: 5
-    mode: box
-    optimistic: true
-
+    widget: lv_slidertimeout
+    name: "LVGL Screen Timeout"
+    restore_value: true
+    trigger: on_release
+    
 # -----------------------------------------------------------------------------
 # Image
 # -----------------------------------------------------------------------------
@@ -387,21 +394,65 @@ lvgl:
       scrollbar_mode: "OFF"
       widgets:
         - obj:
-            id: lv_obj_slider
-            x: 20
-            y: 20
+            id: lv_obj_header
+            x: 0
+            y: 0
             width: 280
-            height: 50
+            height: 25
+            align: TOP_MID
             pad_all: 0
             widgets:
-              - slider:
-                  id: lv_slider_14
+              - label:
+                  id: lbl_header
                   x: 0
                   y: 0
-                  width: 200
+                  width: 240
                   height: 20
-                  align: CENTER
-                  value: 15
-                  min_value: 10
-                  max_value: 180
-                  radius: 9999
+                  align: TOP_MID
+                  text: "Settings"
+                  text_align: CENTER
+
+        - obj:
+            id: objsettings
+            x: 10
+            y: 30
+            width: 300
+            height: 175
+            pad_all: 0
+            widgets:
+              - obj:
+                  id: lv_obj_slidertimeout
+                  x: 10
+                  y: 5
+                  width: 280
+                  height: 60
+                  pad_all: 0
+                  widgets:
+                    - slider:
+                        id: lv_slidertimeout
+                        x: 15
+                        y: 25
+                        width: 200
+                        height: 20
+                        value: 15
+                        min_value: 10
+                        max_value: 180
+                        radius: 9999
+                        on_release:
+                          - lvgl.widget.update: 
+                              id: lv_slidertimeout
+                          - lvgl.label.update: 
+                              id: lv_label_screentimeoutvalue
+                              text:
+                                format: "%d"
+                                args: [int(x)]
+                    - label:
+                        id: lv_label_screentimeout
+                        x: 10
+                        y: 0
+                        text: "Screen Timeout"
+                    - label:
+                        id: lv_label_screentimeoutvalue
+                        x: 225
+                        y: 25
+                        text: "10s"
