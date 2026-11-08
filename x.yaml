@@ -81,28 +81,15 @@ ota:
 # -----------------------------------------------------------------------------
 # Custom Device Configuration
 # -----------------------------------------------------------------------------
-# SPI
 spi:
   id: lcd_spi
   mosi_pin: GPIO23
   miso_pin: GPIO19
   clk_pin: GPIO18
-  #cs_pin: 
 
 # -----------------------------------------------------------------------------
 # Number
 # -----------------------------------------------------------------------------
-#number:
-#  - platform: template
-#    name: LVGL Screen Timeout
-#    id: display_timeout
-#    unit_of_measurement: "s"
-#    initial_value: 15
-#    min_value: 10
-#    max_value: 180
-#    step: 5
-#    mode: box
-#    optimistic: true
 number:
   - platform: lvgl
     id: display_timeout
@@ -175,6 +162,26 @@ sensor:
 #            text:
 #              format: "Temperatuur: %.1f °C"
 #              args: [ 'x' ]
+  - platform: homeassistant
+    id: temp_WP_san_water
+    entity_id: sensor.sanitaire_water_temperatuur
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_hp_temp_san
+            text:
+              format: "%.1f °C"
+              args: [ 'x' ]
+  - platform: homeassistant
+    id: temp_WP_vv_water
+    entity_id: sensor.buffer_vloerverwarmin_temperatuur
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_hp_temp_ww
+            text:
+              format: "%.1f °C"
+              args: [ 'x' ]
 
 # -----------------------------------------------------------------------------
 # Binary Sensors
@@ -230,6 +237,7 @@ font:
       - "\U000F1A43" # mdi:heat-pump
       - "\U000F1A45" # mdi:heat-wave
       - "\U000F0606" # mdi:pool
+      - "\U000F1A1B" # mdi:gas-burner
                 
 # -----------------------------------------------------------------------------
 # Display
@@ -413,6 +421,8 @@ lvgl:
                     text: "\U000F050F"
                   - id: btn_heatpipes
                     text: "\U000F1A45"
+                  - id: btn_pelletburner
+                    text: "\U000F1A1B"
     - id: pagesettings
       pad_all: 0
       scrollbar_mode: "OFF"
@@ -527,13 +537,13 @@ lvgl:
                   grid_cell_x_align: STRETCH
                   widgets:
                     - label:
-                        id: lv_label_29
+                        id: lv_label_vv
                         x: 0
                         y: 0
                         text: "Vloerverwarming"
                         pad_all: 5
                     - label:
-                        id: widget_1794163680632_5aqhzki4q
+                        id: lv_hp_temp_ww
                         x: 150
                         y: 0
                         text: "10 °C"
@@ -546,7 +556,7 @@ lvgl:
                   grid_cell_x_align: STRETCH
                   widgets:
                     - label:
-                        id: lv_label_28
+                        id: lv_label_sw
                         x: 0
                         y: 0
                         text: "Sanitair water"
