@@ -210,11 +210,10 @@ switch:
 # -----------------------------------------------------------------------------
 # Display
 # -----------------------------------------------------------------------------
-font:
-  - file: "gfonts://Roboto"
-    id: my_font
-    size: 20
-
+#font:
+#  - file: "gfonts://Roboto"
+#    id: my_font
+#    size: 20
 display:
   - platform: mipi_spi
     id: my_display
@@ -223,12 +222,6 @@ display:
     dc_pin: GPIO4
     cs_pin: GPIO5
     reset_pin: GPIO22
-    #color_depth: 8bit       # Voorkomt geheugencrashes (16bit kan mits PSRAM)
-#    rotation: 90
-#    lambda: |-
-#      // Print the string "Hello World!" at [0,10]
-#      it.line(0, 0, 50, 50);
-#      it.print(0, 10, id(my_font), "Hello World!");
 
 # -----------------------------------------------------------------------------
 # Touchscreen
@@ -444,7 +437,7 @@ lvgl:
                           - lvgl.label.update: 
                               id: lv_label_screentimeoutvalue
                               text:
-                                format: "%d"
+                                format: "%d s"
                                 args: [int(x)]
                     - label:
                         id: lv_label_screentimeout
@@ -453,6 +446,6 @@ lvgl:
                         text: "Screen Timeout"
                     - label:
                         id: lv_label_screentimeoutvalue
-                        x: 225
+                        x: 230
                         y: 25
-                        text: "10s"
+                        text: ""
