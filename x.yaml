@@ -229,6 +229,7 @@ font:
       - "\U000F0493" # mdi:cog
       - "\U000F1A43" # mdi:heat-pump
       - "\U000F1A45" # mdi:heat-wave
+      - "\U000F0606" # mdi:pool
                 
 # -----------------------------------------------------------------------------
 # Display
@@ -402,6 +403,8 @@ lvgl:
                         lvgl.page.show: pagesettings                        
                   - id: btn_heatpump
                     text: "\U000F1A43"
+                  - id: btn_pool
+                    text: "\U000F0606"
               - buttons:
                   - id: btn_temps
                     text: "\U000F050F"
