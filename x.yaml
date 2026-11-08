@@ -228,6 +228,7 @@ font:
       - "\U000F050F" # mdi:thermometer
       - "\U000F0493" # mdi:cog
       - "\U000F1A43" # mdi:heat-pump
+      - "\U000F1A45" # mdi:heat-wave
                 
 # -----------------------------------------------------------------------------
 # Display
@@ -402,8 +403,10 @@ lvgl:
                   - id: btn_heatpump
                     text: "\U000F1A43"
               - buttons:
-                  - id: btn_4                    
+                  - id: btn_temps
                     text: "\U000F050F"
+                  - id: btn_heatpipes
+                    text: "\U000F1A45"
     - id: pagesettings
       pad_all: 0
       scrollbar_mode: "OFF"
