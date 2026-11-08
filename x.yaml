@@ -311,7 +311,7 @@ lvgl:
                   arc_width: 8
           on_press:
             - lvgl.page.next: 
-        - obj:
+      - obj:
           id: ota_box
           hidden: true
           align: center
@@ -330,32 +330,32 @@ lvgl:
                 min_value: 0
                 max_value: 100
                 value: 0
-        - buttonmatrix:
-            id: top_layer
-            x: 0
-            y: 0
-            width: 100%
-            height: 30
-            align: BOTTOM_MID
-            outline_width: 0
-            pad_all: 0
-            rows:
-              - buttons:
-                - id: page_prev
-                  text: "\uF053"
-                  on_press:
-                    then:
-                      lvgl.page.previous:
-                - id: page_home
-                  text: "\uF015"
-                  on_press:
-                    then:
-                      lvgl.page.show: page_home
-                - id: page_next
-                  text: "\uF054"
-                  on_press:
-                    then:
-                      lvgl.page.next:	  
+      - buttonmatrix:
+          id: top_layer
+          x: 0
+          y: 0
+          width: 100%
+          height: 30
+          align: BOTTOM_MID
+          outline_width: 0
+          pad_all: 0
+          rows:
+            - buttons:
+              - id: page_prev
+                text: "\uF053"
+                on_press:
+                  then:
+                    lvgl.page.previous:
+              - id: page_home
+                text: "\uF015"
+                on_press:
+                  then:
+                    lvgl.page.show: page_home
+              - id: page_next
+                text: "\uF054"
+                on_press:
+                  then:
+                    lvgl.page.next:	  
   pages:
     - id: pageBoot
       widgets:
