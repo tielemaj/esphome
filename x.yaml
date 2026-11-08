@@ -314,7 +314,7 @@ lvgl:
           y: 0
           width: 100%
           height: 100%
-          #bg_color: 0xffffff
+          bg_color: 0xffffff
           bg_opa: COVER
           radius: 0
           pad_all: 0
@@ -399,17 +399,9 @@ lvgl:
                     on_press:
                       then:
                         lvgl.page.show: pagesettings
-                  - id: btn_2
-                    text: ""
-                  - id: btn_3
-                    text: ""
               - buttons:
                   - id: btn_4                    
                     text: "\U000F050F"
-                  - id: btn_5
-                    text: ""
-                  - id: btn_6
-                    text: ""        
     - id: pagesettings
       pad_all: 0
       scrollbar_mode: "OFF"
@@ -487,10 +479,12 @@ lvgl:
                   widgets:
                     - checkbox:
                         id: lv_cb_read_hp
-                        x: 0
+                        x: 10
                         y: 0
                         align: LEFT_MID
                         text: "Read Heat Pump"
                         state:
                           checked: true
                         pad_column: 10
+                        on_click:
+                          - switch.toggle: ha_read_hp
