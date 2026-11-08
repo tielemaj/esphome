@@ -439,15 +439,21 @@ lvgl:
             y: 30
             width: 300
             height: 175
-            pad_all: 0
+            pad_all: 5
+            layout:
+              type: GRID
+              grid_rows: [CONTENT, CONTENT]
+              grid_columns: [FR(1)]
+              pad_row: 5
             widgets:
               - obj:
                   id: lv_obj_slidertimeout
-                  x: 10
-                  y: 5
-                  width: 280
-                  height: 60
+#                  x: 0
+#                  y: 0
+#                  width: 280
+#                  height: 60
                   pad_all: 0
+                  grid_cell_x_align: STRETCH
                   widgets:
                     - slider:
                         id: lv_slidertimeout
@@ -479,11 +485,12 @@ lvgl:
                         text: ""
               - obj:
                   id: lv_obj_25
-                  x: 10
-                  y: 65
-                  width: 280
-                  height: 30
+#                  x: 10
+#                  y: 65
+#                  width: 280
+#                  height: 30
                   pad_all: 0
+                  grid_cell_x_align: STRETCH
                   widgets:
                     - checkbox:
                         id: lv_cb_read_hp
