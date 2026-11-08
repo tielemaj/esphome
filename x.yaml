@@ -227,7 +227,7 @@ font:
     glyphs:
       - "\U000F050F" # mdi:thermometer
       - "\U000F0493" # mdi:cog
-      #- "\U000F04B0" # mdi-play (Afspelen)
+      - "\U000F1A43" # mdi:heat-pump
                 
 # -----------------------------------------------------------------------------
 # Display
@@ -398,7 +398,9 @@ lvgl:
                     text: "\U000F0493"
                     on_press:
                       then:
-                        lvgl.page.show: pagesettings
+                        lvgl.page.show: pagesettings                        
+                  - id: btn_heatpump
+                    text: "\U000F1A43"
               - buttons:
                   - id: btn_4                    
                     text: "\U000F050F"
