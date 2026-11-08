@@ -531,11 +531,13 @@ lvgl:
                         x: 0
                         y: 0
                         text: "Vloerverwarming"
+                        pad_all: 5
                     - label:
                         id: widget_1794163680632_5aqhzki4q
                         x: 150
                         y: 0
                         text: "10 °C"
+                        pad_all: 5
               - obj:
                   id: lv_obj_27
                   width: 100
@@ -548,11 +550,13 @@ lvgl:
                         x: 0
                         y: 0
                         text: "Sanitair water"
+                        pad_all: 5
                     - label:
                         id: lv_hp_temp_san
                         x: 150
                         y: 0
                         text: "10 °C"
+                        pad_all: 5
 
         - obj:
             id: widget_1794163868311_09sez14p8
