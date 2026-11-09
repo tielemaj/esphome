@@ -281,6 +281,16 @@ sensor:
             text:
               format: "%.1f kW"
               args: [ 'x / 1000' ]
+  - platform: homeassistant
+    id: average_batterij
+    entity_id: sensor.total_avg_batterij
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_el_batery_avg
+            text:
+              format: "%.0f%%"
+              args: [ 'x' ]
 
 #sensor.energy_grid_smartgatewayp1_power_consumed_smartgatewayp1_power_produced_net_power
 # -----------------------------------------------------------------------------
@@ -979,7 +989,7 @@ lvgl:
             pad_all: 5
             layout:
               type: GRID
-              grid_rows: [CONTENT, CONTENT, CONTENT]
+              grid_rows: [CONTENT, CONTENT, CONTENT, CONTENT]
               grid_columns: [FR(1)]
             widgets:
               - obj:
@@ -1036,6 +1046,25 @@ lvgl:
                         pad_all: 5
                     - label:
                         id: lv_el_batery_power
+                        x: 150
+                        y: 0
+                        text: ""
+                        pad_all: 5
+              - obj:
+                  id: lv_obj_el_batery_avg
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_lbl_el_batery_avg
+                        x: 0
+                        y: 0
+                        text: "Batterij"
+                        pad_all: 5
+                    - label:
+                        id: lv_el_batery_avg
                         x: 150
                         y: 0
                         text: ""
