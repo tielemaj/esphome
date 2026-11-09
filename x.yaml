@@ -278,17 +278,17 @@ switch:
           id: lv_cb_read_hp
           state:
             checked: !lambda return id(ha_read_hp).state;
-#      - if:
-#          condition:
-#            switch.is_on: ha_read_hp
-#          then:
-#            - lvgl.widget.update:
-#                id: btn_heatpump
-#                bg_color: 0x10B981 # Green when ON
-#          else:
-#            - lvgl.widget.update:
-#                id: btn_heatpump
-#                bg_color: 0x10B981 # Green when ON
+      - if:
+          condition:
+            switch.is_on: ha_read_hp
+          then:
+            - lvgl.widget.update:
+                id: btn_heatpump
+                bg_color: 0xFFFFFF # white
+          else:
+            - lvgl.widget.update:
+                id: btn_heatpump
+                bg_color: 0xFF0000 # red
 
 # -----------------------------------------------------------------------------
 # Fonts
