@@ -232,7 +232,7 @@ sensor:
       then:
         - lvgl.label.update: 
             id: lv_hp_buffer_mode
-            text: !lambda: |-
+            text: !lambda |-
                       if (x == 0) {
                           return "Idle";
                       } else if (x == 1) {
