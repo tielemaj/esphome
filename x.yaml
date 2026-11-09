@@ -163,14 +163,6 @@ sensor:
               format: "%.1f °C"
               args: [ 'x' ]
   - platform: homeassistant
-    id: modePelletKetel
-    entity_id: sensor.pellematic_pellematic_state
-    on_value:
-      then:
-        - lvgl.label.update: 
-            id: lv_pb_mode
-            text: !lambda return x;
-  - platform: homeassistant
     id: temp_WP_san_water
     entity_id: sensor.sanitaire_water_temperatuur
     on_value:
@@ -190,6 +182,19 @@ sensor:
             text:
               format: "%.1f °C"
               args: [ 'x' ]
+
+# -----------------------------------------------------------------------------
+# Text Sensors
+# -----------------------------------------------------------------------------
+text_sensor:
+  - platform: homeassistant
+    id: modePelletKetel
+    entity_id: sensor.pellematic_pellematic_state
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_pb_mode
+            text: !lambda return x;
 
 # -----------------------------------------------------------------------------
 # Binary Sensors
