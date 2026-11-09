@@ -284,11 +284,11 @@ switch:
           then:
             - lvgl.widget.update:
                 id: btn_heatpump
-                bg_color: 0xFFFFFF # white
+                text_color: 0xFFFFFF # white
           else:
             - lvgl.widget.update:
                 id: btn_heatpump
-                bg_color: 0xFF0000 # red
+                text_color: 0xFF0000 # red
 
 # -----------------------------------------------------------------------------
 # Fonts
