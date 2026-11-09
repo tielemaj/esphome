@@ -1,0 +1,1114 @@
+# -----------------------------------------------------------------------------
+# Substitution Variables
+# -----------------------------------------------------------------------------
+substitutions:
+  device_internal_name: bureauscreen
+  device_friendly_name: BureauScreen
+  device_wifi_name: bureauscreen
+  device_sampling_time: 30s
+
+# -----------------------------------------------------------------------------
+# Common Packages
+# -----------------------------------------------------------------------------
+packages:
+  # ---------------------------------------------------------------------------
+  # Board
+  # ---------------------------------------------------------------------------
+  board: !include boards/esp32/esp32s.yaml
+  settings: !include common/core/settings.yaml
+
+  # ---------------------------------------------------------------------------
+  # Network
+  # ---------------------------------------------------------------------------
+  wifi: !include common/network/wifi.yaml
+  webserver: !include
+    file: common/network/webserver.yaml
+    vars:
+      version: 3
+  bluetooth: !include common/network/bluetooth_tracker.yaml
+
+esphome:
+  on_boot:
+    - delay: 5s
+    - lvgl.widget.hide: boot_screen
+    
+    # ######################################################
+    # # Must be turned on before setting frequency & level
+    # ######################################################
+    # - output.turn_on: buzzer
+    # ######################################################
+    # # Frequency sets the wave size
+    # ######################################################
+    # - output.ledc.set_frequency:
+    #     id: buzzer
+    #     frequency: "1kHz"
+    # ######################################################
+    # # level sets the %age time the PWM is on
+    # ######################################################
+    # - output.set_level:
+    #     id: buzzer
+    #     level: "50%"    
+    # - delay: 2s
+    # - output.turn_off: buzzer    
+  
+ota:
+  - platform: esphome
+    on_begin:
+      - lvgl.widget.show: ota_box
+      - if:
+          condition: 
+            light.is_off: displaybacklight
+          then:
+            - logger.log: "LVGL resuming"
+            - lvgl.resume:
+            - lvgl.widget.redraw:
+            - light.turn_on: displaybacklight
+      - lvgl.label.update:
+          id: ota_label
+          text: "Updating..."
+      - lvgl.bar.update:
+          id: ota_bar
+          value: 0
+      - lambda: id(lvgl_id).loop();
+    on_progress:
+      - lvgl.bar.update:
+          id: ota_bar
+          value: !lambda return x;
+      - lvgl.label.update:
+          id: ota_label
+          text:
+            format: "Updating... %.0f%%"
+            args: [x]
+      - lambda: id(lvgl_id).loop();
+    on_end:
+      - lvgl.bar.update:
+          id: ota_bar
+          value: 100
+      - lvgl.label.update:
+          id: ota_label
+          text: "Update complete, rebooting"
+      - lambda: id(lvgl_id).loop();
+    on_error:
+      - lvgl.label.update:
+          id: ota_label
+          text:
+            format: "Update failed (error %u)"
+            args: [x]
+      - lambda: id(lvgl_id).loop();
+
+# -----------------------------------------------------------------------------
+# Custom Device Configuration
+# -----------------------------------------------------------------------------
+spi:
+  id: lcd_spi
+  mosi_pin: GPIO23
+  miso_pin: GPIO19
+  clk_pin: GPIO18
+
+# -----------------------------------------------------------------------------
+# Number
+# -----------------------------------------------------------------------------
+number:
+  - platform: lvgl
+    id: display_timeout
+    widget: lv_slidertimeout
+    name: "LVGL Screen Timeout"
+    restore_value: true
+    trigger: on_release
+
+# -----------------------------------------------------------------------------
+# Image
+# -----------------------------------------------------------------------------
+image:
+  - platform: file
+    file: https://media.esphome.io/logo/logo.png
+    id: boot_logo
+    resize: 200x200
+    type: RGB565
+    transparency: alpha_channel
+
+# -----------------------------------------------------------------------------
+# Output
+# -----------------------------------------------------------------------------
+output:
+  - platform: gpio
+    pin: GPIO15 
+    id: light_output_backlight
+    inverted: true
+
+  - platform: ledc
+    pin: GPIO21
+    id: buzzer
+
+# -----------------------------------------------------------------------------
+# Time
+# -----------------------------------------------------------------------------
+time:
+  - platform: sntp
+    on_time:
+      - hours: 2,3,4,5
+        minutes: 5
+        seconds: 0
+        then:
+          - switch.turn_on: switch_antiburn
+      - hours: 2,3,4,5
+        minutes: 35
+        seconds: 0
+        then:
+          - switch.turn_off: switch_antiburn
+    on_time_sync:
+      then:
+        - logger.log: "Synchronized system clock"
+
+# -----------------------------------------------------------------------------
+# Lights
+# -----------------------------------------------------------------------------
+light:
+  - platform: binary
+    output: light_output_backlight
+    id: displaybacklight
+    name: "Display Backlight"
+    restore_mode: ALWAYS_ON
+
+# -----------------------------------------------------------------------------
+# Sensors
+# -----------------------------------------------------------------------------
+sensor:
+  - platform: homeassistant
+    id: tempPelletKetel
+    entity_id: sensor.pellematic_heater_1_temperature
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_pb_keteltemp
+            text:
+              format: "%.1f °C"
+              args: [ 'x' ]
+  - platform: homeassistant
+    id: powerPelletKetel
+    entity_id: sensor.pellematic_heater_1_modulation
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_pb_power
+            text:
+              format: "%.0f%%"
+              args: [ 'x' ]
+
+  - platform: homeassistant
+    id: temp_WP_san_water
+    entity_id: sensor.sanitaire_water_temperatuur
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_hp_temp_san
+            text:
+              format: "%.1f °C"
+              args: [ 'x' ]
+  - platform: homeassistant
+    id: temp_WP_vv_water
+    entity_id: sensor.buffer_vloerverwarmin_temperatuur
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_hp_temp_ww
+            text:
+              format: "%.1f °C"
+              args: [ 'x' ]
+
+  - platform: homeassistant
+    id: temp_SP_in_water
+    entity_id: sensor.ww_in_temperatuur
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_sp_in_temp
+            text:
+              format: "%.1f °C"
+              args: [ 'std::isnan(x) ? 0.0f : (x)' ]
+  - platform: homeassistant
+    id: temp_SP_out_water
+    entity_id: sensor.ww_out_temperatuur
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_sp_out_temp
+            text:
+              format: "%.1f °C"
+              args: [ 'std::isnan(x) ? 0.0f : (x)' ]
+
+  - platform: homeassistant
+    id: temp_HP_buffer
+    entity_id: sensor.heatingcontroller_temperatureheatpipes
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_hp_buffer_temp
+            text:
+              format: "%.1f °C"
+              args: [ 'x' ]
+  - platform: homeassistant
+    id: temp_HP_mode
+    entity_id: input_number.mode_heatpipes
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_hp_buffer_mode
+            text: !lambda |-
+                      if (x == 0) {
+                          return "Idle";
+                      } else if (x == 1) {
+                          return "Heatpipes -> Floor";
+                      } else if (x == 2) {
+                          return "Heatpipes -> Hot water";
+                      } else if (x == 3) {
+                          return "Heatpipes -> Pool";
+                      } else if (x == 4) {
+                          return "Pellets -> Pool";
+                      } else if (x == 5) {
+                          return "Pellets -> Hot Water";
+                      } else if (x == 6) {
+                          return "Pellets -> Floor";
+                      } else {
+                          return "?";
+                      }
+
+  - platform: homeassistant
+    id: power_grid
+    entity_id: sensor.heatingcontroller_temperatureheatpipes
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_el_grid_power
+            text:
+              format: "%.1f kW"
+              args: [ 'x / 1000' ]
+  - platform: homeassistant
+    id: power_solar
+    entity_id: sensor.total_solar_power
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_el_solar_power
+            text:
+              format: "%.1f kW"
+              args: [ 'std::isnan(x) ? 0.0f : (x / 1000.0f)' ]
+  - platform: homeassistant
+    id: power_batterij
+    entity_id: sensor.total_battery_power
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_el_batery_power
+            text:
+              format: "%.1f kW"
+              args: [ 'x / 1000' ]
+  - platform: homeassistant
+    id: average_batterij
+    entity_id: sensor.total_avg_batterij
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_el_batery_avg
+            text:
+              format: "%.0f%%"
+              args: [ 'x' ]
+
+# -----------------------------------------------------------------------------
+# Text Sensors
+# -----------------------------------------------------------------------------
+text_sensor:
+  - platform: homeassistant
+    id: modePelletKetel
+    entity_id: sensor.pellematic_pellematic_state
+    on_value:
+      then:
+        - lvgl.label.update: 
+            id: lv_pb_mode
+            text: !lambda return x;
+
+# -----------------------------------------------------------------------------
+# Binary Sensors
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Switchs
+# -----------------------------------------------------------------------------
+switch:
+  - platform: template
+    name: Antiburn
+    id: switch_antiburn
+    icon: mdi:television-shimmer
+    optimistic: true
+    entity_category: "config"
+    turn_on_action:
+      - logger.log: "Starting Antiburn"
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - lvgl.resume:
+            - lvgl.widget.redraw:
+      - lvgl.pause:
+          show_snow: true
+    turn_off_action:
+      - logger.log: "Stopping Antiburn"
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - lvgl.resume:
+            - lvgl.widget.redraw:
+
+  - platform: homeassistant
+    id: ha_read_hp
+    entity_id: input_boolean.read_heat_pump
+    on_state:
+      - lvgl.widget.update: 
+          id: lv_cb_read_hp
+          state:
+            checked: !lambda return id(ha_read_hp).state;
+
+# -----------------------------------------------------------------------------
+# Fonts
+# -----------------------------------------------------------------------------
+font:
+  - file: "https://github.com/Templarian/MaterialDesign-Webfont/raw/v7.4.47/fonts/materialdesignicons-webfont.ttf"
+    id: mdi_font
+    size: 32
+    bpp: 4 # Anti-aliasing instelling (1 tot 8). 4 of 8 geeft mooie ronde randen.
+    glyphs: #https://pictogrammers.com/library/mdi/icon/home-lightning-bolt-outline/
+      - "\U000F050F" # mdi:thermometer
+      - "\U000F0493" # mdi:cog
+      - "\U000F1A43" # mdi:heat-pump
+      - "\U000F1A45" # mdi:heat-wave
+      - "\U000F0606" # mdi:pool
+      - "\U000F1A1B" # mdi:gas-burner
+      - "\U000F1904" # mdi:home-lightning-bolt-outline
+
+# -----------------------------------------------------------------------------
+# Display
+# -----------------------------------------------------------------------------
+display:
+  - platform: mipi_spi
+    id: my_display
+    model: ILI9341
+    spi_id: lcd_spi
+    dc_pin: GPIO4
+    cs_pin: GPIO5
+    reset_pin: GPIO22
+
+# -----------------------------------------------------------------------------
+# Touchscreen
+# -----------------------------------------------------------------------------
+touchscreen:
+  platform: xpt2046
+  cs_pin: GPIO14
+  #interrupt_pin: GPIO2
+  update_interval: 50ms
+  threshold: 400
+#  transform:
+#    mirror_x: true
+  calibration:
+    x_min: 220
+    x_max: 3800
+    y_min: 280
+    y_max: 3830
+  transform:
+    swap_xy: false
+    mirror_x: true
+    mirror_y: false
+  on_release:
+    - if:
+        condition: lvgl.is_paused
+        then:
+          - logger.log: "LVGL resuming"
+          - lvgl.resume:
+          - lvgl.widget.redraw:
+          - light.turn_on: displaybacklight
+
+# -----------------------------------------------------------------------------
+# Scripts
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Bluetooth
+# -----------------------------------------------------------------------------
+esp32_ble_tracker:
+
+ble_client:
+  - mac_address: DE:40:EE:1E:E5:59
+    id: itag_black
+    auto_connect: true
+
+# -----------------------------------------------------------------------------
+# Lvgl
+# -----------------------------------------------------------------------------
+lvgl:
+  id: lvgl_id
+  rotation: 90  # <-- Place rotation here
+  on_idle:
+    timeout: !lambda "return (id(display_timeout).state * 1000);"
+    then:
+      - logger.log: "LVGL is idle"
+      - light.turn_off: displaybacklight
+      - lvgl.pause:
+  theme:
+    dark_mode: true
+    obj:
+      bg_color: 0x1F2937
+      bg_opa: 30%
+      radius: 8
+      border_color: 0x4B5563
+      border_width: 1
+
+  top_layer:
+    scrollbar_mode: "OFF"
+    widgets:
+      - obj:
+          id: boot_screen
+          x: 0
+          y: 0
+          width: 100%
+          height: 100%
+          bg_color: 0xffffff
+          bg_opa: COVER
+          radius: 0
+          pad_all: 0
+          border_width: 0
+          widgets:
+            - image:
+                align: CENTER
+                src: boot_logo
+                y: -50
+            - spinner:
+                align: CENTER
+                y: 50
+                height: 50
+                width: 50
+                spin_time: 1s
+                arc_length: 60deg
+                arc_width: 8
+                indicator:
+                  #arc_color: 0x18bcf2
+                  arc_width: 8
+          on_press:
+            - lvgl.page.next: 
+      - obj:
+          id: ota_box
+          hidden: true
+          align: center
+          width: 90%
+          height: 120
+          widgets:
+            - label:
+                id: ota_label
+                align: top_mid
+                text: "Updating..."
+            - bar:
+                id: ota_bar
+                align: bottom_mid
+                width: 100%
+                height: 24
+                min_value: 0
+                max_value: 100
+                value: 0
+      - buttonmatrix:
+          id: top_layer
+          x: 0
+          y: 0
+          width: 100%
+          height: 30
+          align: BOTTOM_MID
+          outline_width: 0
+          pad_all: 0
+          rows:
+            - buttons:
+              - id: page_prev
+                text: "\uF053"
+                on_press:
+                  then:
+                    lvgl.page.previous:
+              - id: page_home
+                text: "\uF015"
+                on_press:
+                  then:
+                    lvgl.page.show: pagehome
+              - id: page_next
+                text: "\uF054"
+                on_press:
+                  then:
+                    lvgl.page.next:
+  pages:    
+    - id: pagehome # -----------------------------------------------------------------------------
+      widgets:
+        - buttonmatrix:
+            id: lv_bm_homepage
+            x: 20
+            y: 20
+            width: 280
+            height: 180
+            text_font: mdi_font
+            rows:
+              - buttons:
+                  - id: btn_settings
+                    text: "\U000F0493"
+                    on_press:
+                      then:
+                        lvgl.page.show: pagesettings
+                  - id: btn_heatpump
+                    text: "\U000F1A43"
+                    on_press:
+                      then:
+                        lvgl.page.show: pagewarmtepomp
+                  - id: btn_pool
+                    text: "\U000F0606"
+                    on_press:
+                      then:
+                        lvgl.page.show: pageswimmingpool
+                  - id: btn_electricity
+                    text: "\U000F1904"
+                    on_press:
+                      then:
+                        lvgl.page.show: pageelectricity
+              - buttons:
+                  - id: btn_temps
+                    text: "\U000F050F"
+                  - id: btn_heatpipes
+                    text: "\U000F1A45"
+                    on_press:
+                      then:
+                        lvgl.page.show: pageheatpipes
+                  - id: btn_pelletburner
+                    text: "\U000F1A1B"
+                    on_press:
+                      then:
+                        lvgl.page.show: pagepelletburner
+
+    - id: pagesettings # -----------------------------------------------------------------------------
+      pad_all: 0
+      scrollbar_mode: "OFF"
+      widgets:
+        - obj:
+            id: lv_obj_header
+            x: 0
+            y: 0
+            width: 280
+            height: 25
+            align: TOP_MID
+            pad_all: 0
+            widgets:
+              - label:
+                  id: lbl_header
+                  x: 0
+                  y: 0
+                  width: 240
+                  height: 20
+                  align: TOP_MID
+                  text: "Settings"
+                  text_align: CENTER
+        - obj:
+            id: objsettings
+            x: 10
+            y: 30
+            width: 300
+            height: 175
+            pad_all: 5
+            layout:
+              type: GRID
+              grid_rows: [CONTENT, CONTENT]
+              grid_columns: [FR(1)]
+              pad_row: 5
+            widgets:
+              - obj:
+                  id: lv_obj_slidertimeout
+                  height: 60
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - slider:
+                        id: lv_slidertimeout
+                        x: 15
+                        y: 25
+                        width: 200
+                        height: 20
+                        value: 15
+                        min_value: 10
+                        max_value: 180
+                        radius: 9999
+                        on_value:
+                          - lvgl.widget.update: 
+                              id: lv_slidertimeout
+                          - lvgl.label.update: 
+                              id: lv_label_screentimeoutvalue
+                              text:
+                                format: "%d s"
+                                args: [int(x)]
+                    - label:
+                        id: lv_label_screentimeout
+                        x: 10
+                        y: 0
+                        text: "Screen Timeout"
+                    - label:
+                        id: lv_label_screentimeoutvalue
+                        x: 230
+                        y: 25
+                        text: ""
+              - obj:
+                  id: lv_obj_25
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - checkbox:
+                        id: lv_cb_read_hp
+                        x: 10
+                        y: 0
+                        align: LEFT_MID
+                        text: "Read Heat Pump"
+                        state:
+                          checked: true
+                        pad_column: 10
+                        on_click:
+                          - switch.toggle: ha_read_hp
+
+    - id: pagewarmtepomp # -----------------------------------------------------------------------------
+      bg_color: 0x000000
+      pad_all: 0
+      scrollbar_mode: "OFF"
+      widgets:
+        - obj:
+            id: lv_hp_temp_vv
+            x: 10
+            y: 33
+            width: 300
+            height: 175
+            shadow_width: 8
+            shadow_color: 0x000000
+            pad_all: 5
+            layout:
+              type: GRID
+              grid_rows: [CONTENT, CONTENT]
+              grid_columns: [FR(1)]
+            widgets:
+              - obj:
+                  id: lv_obj_26
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_label_vv
+                        x: 0
+                        y: 0
+                        text: "Vloerverwarming"
+                        pad_all: 5
+                    - label:
+                        id: lv_hp_temp_ww
+                        x: 150
+                        y: 0
+                        text: ""
+                        pad_all: 5
+              - obj:
+                  id: lv_obj_27
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_label_sw
+                        x: 0
+                        y: 0
+                        text: "Sanitair water"
+                        pad_all: 5
+                    - label:
+                        id: lv_hp_temp_san
+                        x: 150
+                        y: 0
+                        text: ""
+                        pad_all: 5
+        - obj:
+            id: widget_1794163868311_09sez14p8
+            x: 0
+            y: 0
+            width: 280
+            height: 25
+            align: TOP_MID
+            pad_all: 0
+            widgets:
+              - label:
+                  id: widget_1794163868311_xw9b89wy9
+                  x: 0
+                  y: 0
+                  width: 240
+                  height: 20
+                  align: TOP_MID
+                  text: "Warmtepomp"
+                  text_align: CENTER
+
+    - id: pagepelletburner # -----------------------------------------------------------------------------
+      bg_color: 0x000000
+      pad_all: 0
+      scrollbar_mode: "OFF"
+      widgets:
+        - obj:
+            id: lv_pb
+            x: 10
+            y: 33
+            width: 300
+            height: 175
+            shadow_width: 8
+            shadow_color: 0x000000
+            pad_all: 5
+            layout:
+              type: GRID
+              grid_rows: [CONTENT, CONTENT, CONTENT]
+              grid_columns: [FR(1)]
+            widgets:
+              - obj:
+                  id: lv_obj_pb_keteltemp
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_lbl_pb_keteltemp
+                        x: 0
+                        y: 0
+                        text: "Keteltemp"
+                        pad_all: 5
+                    - label:
+                        id: lv_pb_keteltemp
+                        x: 120
+                        y: 0
+                        text: ""
+                        pad_all: 5
+              - obj:
+                  id: lv_obj_pb_power
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_lbl_pb_power
+                        x: 0
+                        y: 0
+                        text: "vermogen"
+                        pad_all: 5
+                    - label:
+                        id: lv_pb_power
+                        x: 120
+                        y: 0
+                        text: ""
+                        pad_all: 5
+              - obj:
+                  id: lv_obj_pb_mode
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_lbl_pb_mode
+                        x: 0
+                        y: 0
+                        text: "Mode"
+                        pad_all: 5
+                    - label:
+                        id: lv_pb_mode
+                        x: 150
+                        y: 0
+                        text: ""
+                        pad_all: 5
+        - obj:
+            id: lv_obj_pb_title
+            x: 0
+            y: 0
+            width: 280
+            height: 25
+            align: TOP_MID
+            pad_all: 0
+            widgets:
+              - label:
+                  id: lv_lbl_pb_title
+                  x: 0
+                  y: 0
+                  width: 240
+                  height: 20
+                  align: TOP_MID
+                  text: "Pelletketel"
+                  text_align: CENTER                  
+
+    - id: pageswimmingpool # -----------------------------------------------------------------------------
+      bg_color: 0x000000
+      pad_all: 0
+      scrollbar_mode: "OFF"
+      widgets:
+        - obj:
+            id: lv_sp
+            x: 10
+            y: 33
+            width: 300
+            height: 175
+            shadow_width: 8
+            shadow_color: 0x000000
+            pad_all: 5
+            layout:
+              type: GRID
+              grid_rows: [CONTENT, CONTENT]
+              grid_columns: [FR(1)]
+            widgets:
+              - obj:
+                  id: lv_obj_sp_in_temp
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_lbl_sp_in_temp
+                        x: 0
+                        y: 0
+                        text: "In"
+                        pad_all: 5
+                    - label:
+                        id: lv_sp_in_temp
+                        x: 150
+                        y: 0
+                        text: ""
+                        pad_all: 5
+              - obj:
+                  id: lv_obj_sp_out_temp
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_lbl_sp_out_temp
+                        x: 0
+                        y: 0
+                        text: "Uit"
+                        pad_all: 5
+                    - label:
+                        id: lv_sp_out_temp
+                        x: 150
+                        y: 0
+                        text: ""
+                        pad_all: 5
+        - obj:
+            id: lv_obj_sp_title
+            x: 0
+            y: 0
+            width: 280
+            height: 25
+            align: TOP_MID
+            pad_all: 0
+            widgets:
+              - label:
+                  id: lv_lbl_sp_title
+                  x: 0
+                  y: 0
+                  width: 240
+                  height: 20
+                  align: TOP_MID
+                  text: "Zwembad"
+                  text_align: CENTER
+
+    - id: pageheatpipes # -----------------------------------------------------------------------------
+      bg_color: 0x000000
+      pad_all: 0
+      scrollbar_mode: "OFF"
+      widgets:
+        - obj:
+            id: lv_hp
+            x: 10
+            y: 33
+            width: 300
+            height: 175
+            shadow_width: 8
+            shadow_color: 0x000000
+            pad_all: 5
+            layout:
+              type: GRID
+              grid_rows: [CONTENT, CONTENT]
+              grid_columns: [FR(1)]
+            widgets:
+              - obj:
+                  id: lv_obj_hp_buffer_temp
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_lbl_hp_buffer_temp
+                        x: 0
+                        y: 0
+                        text: "Buffer"
+                        pad_all: 5
+                    - label:
+                        id: lv_hp_buffer_temp
+                        x: 120
+                        y: 0
+                        text: ""
+                        pad_all: 5
+              - obj:
+                  id: lv_obj_hp_buffer_mode
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_lbl_hp_buffer_mode
+                        x: 0
+                        y: 0
+                        text: "Mode"
+                        pad_all: 5
+                    - label:
+                        id: lv_hp_buffer_mode
+                        x: 120
+                        y: 0
+                        text: ""
+                        pad_all: 5
+
+        - obj:
+            id: lv_obj_hp_title
+            x: 0
+            y: 0
+            width: 280
+            height: 25
+            align: TOP_MID
+            pad_all: 0
+            widgets:
+              - label:
+                  id: lv_lbl_hp_title
+                  x: 0
+                  y: 0
+                  width: 240
+                  height: 20
+                  align: TOP_MID
+                  text: "Heatpipes"
+                  text_align: CENTER
+
+    - id: pageelectricity # -----------------------------------------------------------------------------
+      bg_color: 0x000000
+      pad_all: 0
+      scrollbar_mode: "OFF"
+      widgets:
+        - obj:
+            id: lv_el
+            x: 10
+            y: 33
+            width: 300
+            height: 175
+            shadow_width: 8
+            shadow_color: 0x000000
+            pad_all: 5
+            layout:
+              type: GRID
+              grid_rows: [CONTENT, CONTENT, CONTENT, CONTENT]
+              grid_columns: [FR(1)]
+            widgets:
+              - obj:
+                  id: lv_obj_el_grid_power
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_lbl_el_grid_power
+                        x: 0
+                        y: 0
+                        text: "Grid"
+                        pad_all: 5
+                    - label:
+                        id: lv_el_grid_power
+                        x: 150
+                        y: 0
+                        text: ""
+                        pad_all: 5
+              - obj:
+                  id: lv_obj_el_solar_power
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_lbl_el_solar_power
+                        x: 0
+                        y: 0
+                        text: "Solar"
+                        pad_all: 5
+                    - label:
+                        id: lv_el_solar_power
+                        x: 150
+                        y: 0
+                        text: ""
+                        text_align: RIGHT
+                        pad_all: 5
+                        
+              - obj:
+                  id: lv_obj_el_batery_power
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_lbl_el_batery_power
+                        x: 0
+                        y: 0
+                        text: "Batterij"
+                        pad_all: 5
+                    - label:
+                        id: lv_el_batery_power
+                        x: 150
+                        y: 0
+                        text: ""
+                        text_align: RIGHT
+                        pad_all: 5
+              - obj:
+                  id: lv_obj_el_batery_avg
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_lbl_el_batery_avg
+                        x: 0
+                        y: 0
+                        text: "Batterij"
+                        pad_all: 5
+                    - label:
+                        id: lv_el_batery_avg
+                        x: 150
+                        y: 0
+                        text: ""
+                        text_align: RIGHT
+                        pad_all: 5
+
+        - obj:
+            id: lv_obj_el_title
+            x: 0
+            y: 0
+            width: 280
+            height: 25
+            align: TOP_MID
+            pad_all: 0
+            widgets:
+              - label:
+                  id: lv_lbl_el_title
+                  x: 0
+                  y: 0
+                  width: 240
+                  height: 20
+                  align: TOP_MID
+                  text: "Electriciteit"
+                  text_align: CENTER                                    

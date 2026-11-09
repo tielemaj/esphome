@@ -14,3 +14,7 @@ esp32:
   board: lolin_d32_pro
   framework:
     type: esp-idf
+#    advanced:
+#      flash_chip: generic
+#      minimum_chip_revision: "3.1"
+#      sram1_as_iram: true
