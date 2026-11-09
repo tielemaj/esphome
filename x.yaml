@@ -260,7 +260,7 @@ sensor:
             id: lv_el_grid_power
             text:
               format: "%.1f kW"
-              args: [ 'x * 1000' ]
+              args: [ 'x / 1000' ]
   - platform: homeassistant
     id: power_solar
     entity_id: sensor.total_solar_power
@@ -270,7 +270,7 @@ sensor:
             id: lv_el_solar_power
             text:
               format: "%.1f kW"
-              args: [ 'x * 1000' ]
+              args: [ 'x / 1000' ]
   - platform: homeassistant
     id: power_batterij
     entity_id: sensor.total_solar_power
@@ -280,7 +280,7 @@ sensor:
             id: lv_el_batery_power
             text:
               format: "%.1f kW"
-              args: [ 'x * 1000' ]
+              args: [ 'x / 1000' ]
 
 #sensor.energy_grid_smartgatewayp1_power_consumed_smartgatewayp1_power_produced_net_power
 # -----------------------------------------------------------------------------
