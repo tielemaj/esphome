@@ -491,7 +491,7 @@ lvgl:
                       then:
                         lvgl.page.show: pagesettings
                   - id: btn_heatpump
-                    text: "#ff0000 \U000F1A43#"
+                    text: "\U000F1A43"
                     on_press:
                       then:
                         lvgl.page.show: pagewarmtepomp
