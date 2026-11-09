@@ -169,7 +169,7 @@ sensor:
       then:
         - lvgl.label.update: 
             id: lv_pb_mode
-            text: !lambda 'return x;'
+            text: !lambda return x;
   - platform: homeassistant
     id: temp_WP_san_water
     entity_id: sensor.sanitaire_water_temperatuur
