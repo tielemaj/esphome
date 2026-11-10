@@ -1017,13 +1017,13 @@ lvgl:
                           - "Zwembad"
                           - "Vloerverwarming"
                           - "Sanitair water"
-#                        on_state_change:
-#                          then:
-#                            # Update de interne ESPHome select-status (die gekoppeld is aan HA)
-#                            - select.set:
-#                                id: request_heatpipes
-#                                option: !lambda |-
-#                                  return x; // Stuurt de gekozen tekst door
+                        on_state_change:
+                          then:
+                            # Update de interne ESPHome select-status (die gekoppeld is aan HA)
+                            - select.set:
+                                id: request_heatpipes
+                                option: !lambda |-
+                                  return x; // Stuurt de gekozen tekst door
 
         - obj:
             id: lv_obj_hp_title
