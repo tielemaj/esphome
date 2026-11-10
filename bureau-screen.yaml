@@ -1022,7 +1022,7 @@ lvgl:
                             - select.set:
                                 id: request_heatpipes
                                 option: !lambda |-
-                                  return x;
+                                  return x.c_str();
 
         - obj:
             id: lv_obj_hp_title
