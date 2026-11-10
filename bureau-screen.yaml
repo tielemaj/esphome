@@ -1017,12 +1017,12 @@ lvgl:
                           - "Zwembad"
                           - "Vloerverwarming"
                           - "Sanitair water"
-                        on_state_change:
+                        on_value_change:
                           then:
                             - select.set:
                                 id: request_heatpipes
                                 option: !lambda |-
-                                  return x.c_str();
+                                  return x;
 
         - obj:
             id: lv_obj_hp_title
