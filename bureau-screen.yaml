@@ -335,14 +335,17 @@ select:
     name: "Request Heatpipes"
     entity_id: input_select.request_heatpipes
     id: request_heatpipes
+    internal: true
     on_value:
       then:
-        - logger.log:
-            format: "De geselecteerde modus is nu: %s"
-            args: ["x.c_str()"]
-        - lvgl.label.update: 
+        - lvgl.dropdown.update: 
             id: lv_hp_request
-            text: !lambda return x.c_str();
+            selected_index: !lambda |-
+                              if (x == "Idle") return 0;
+                              if (x == "Zwembad") return 1;
+                              if (x == "Vloerverwarming") return 2;
+                              if (x == "Sanitait water") return 3;
+                              return 0;
 
 # -----------------------------------------------------------------------------
 # Binary Sensors
@@ -1004,12 +1007,23 @@ lvgl:
                         y: 0
                         text: "Request"
                         pad_all: 5
-                    - label:
+                    - dropdown:
                         id: lv_hp_request
                         x: 120
                         y: 0
-                        text: ""
                         pad_all: 5
+                        options:
+                          - "Idle"
+                          - "Zwembad"
+                          - "Vloerverwarming"
+                          - "Sanitair water"
+                        on_state_change:
+                          then:
+                            # Update de interne ESPHome select-status (die gekoppeld is aan HA)
+                            - select.set:
+                                id: request_heatpipes
+                                option: !lambda |-
+                                  return x; // Stuurt de gekozen tekst door
 
         - obj:
             id: lv_obj_hp_title
