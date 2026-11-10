@@ -328,6 +328,19 @@ text_sensor:
             text: !lambda return x;
 
 # -----------------------------------------------------------------------------
+# Select
+# -----------------------------------------------------------------------------
+select:
+  - platform: homeassistant
+    name: "Request Heatpipes"
+    entity_id: input_select.request_heatpipes
+    id: request_heatpipes
+    on_value:
+      then:
+        - logger.log:
+            format: "De geselecteerde modus is nu: %s"
+            args: ["x.c_str()"]
+# -----------------------------------------------------------------------------
 # Binary Sensors
 # -----------------------------------------------------------------------------
 
@@ -933,7 +946,7 @@ lvgl:
             pad_all: 5
             layout:
               type: GRID
-              grid_rows: [CONTENT, CONTENT]
+              grid_rows: [CONTENT, CONTENT, CONTENT]
               grid_columns: [FR(1)]
             widgets:
               - obj:
@@ -970,6 +983,25 @@ lvgl:
                         pad_all: 5
                     - label:
                         id: lv_hp_buffer_mode
+                        x: 120
+                        y: 0
+                        text: ""
+                        pad_all: 5
+              - obj:
+                  id: lv_obj_hp_request
+                  width: 100
+                  height: 30
+                  pad_all: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lv_lbl_hp_request
+                        x: 0
+                        y: 0
+                        text: "Request"
+                        pad_all: 5
+                    - label:
+                        id: lv_hp_request
                         x: 120
                         y: 0
                         text: ""
