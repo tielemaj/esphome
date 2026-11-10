@@ -336,16 +336,16 @@ select:
     entity_id: input_select.request_heatpipes
     id: request_heatpipes
     internal: true
-    on_value:
-      then:
-        - lvgl.dropdown.update: 
-            id: lv_hp_request
-            selected_index: !lambda |-
-                              if (x == "Idle") return 0;
-                              if (x == "Zwembad") return 1;
-                              if (x == "Vloerverwarming") return 2;
-                              if (x == "Sanitait water") return 3;
-                              return 0;
+#    on_value:
+#      then:
+#        - lvgl.dropdown.update: 
+#            id: lv_hp_request
+#            selected_index: !lambda |-
+#                              if (x == "Idle") return 0;
+#                              if (x == "Zwembad") return 1;
+#                              if (x == "Vloerverwarming") return 2;
+#                              if (x == "Sanitait water") return 3;
+#                              return 0;
 
 # -----------------------------------------------------------------------------
 # Binary Sensors
