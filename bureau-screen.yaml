@@ -344,7 +344,7 @@ select:
                               if (x == "Idle") return 0;
                               if (x == "Zwembad") return 1;
                               if (x == "Vloerverwarming") return 2;
-                              if (x == "Sanitait water") return 3;
+                              if (x == "Sanitair water") return 3;
                               return 0;
 
 # -----------------------------------------------------------------------------
