@@ -340,6 +340,10 @@ select:
         - logger.log:
             format: "De geselecteerde modus is nu: %s"
             args: ["x.c_str()"]
+        - lvgl.label.update: 
+            id: lv_hp_request
+            text: !lambda return x.c_str();
+
 # -----------------------------------------------------------------------------
 # Binary Sensors
 # -----------------------------------------------------------------------------
