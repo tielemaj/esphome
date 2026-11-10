@@ -1017,7 +1017,7 @@ lvgl:
                           - "Zwembad"
                           - "Vloerverwarming"
                           - "Sanitair water"
-                        on_value_change:
+                        on_value:
                           then:
                             - select.set:
                                 id: request_heatpipes
