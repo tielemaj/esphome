@@ -336,16 +336,16 @@ select:
     entity_id: input_select.request_heatpipes
     id: request_heatpipes
     internal: true
-#    on_value:
-#      then:
-#        - lvgl.dropdown.update: 
-#            id: lv_hp_request
-#            selected_index: !lambda |-
-#                              if (x == "Idle") return 0;
-#                              if (x == "Zwembad") return 1;
-#                              if (x == "Vloerverwarming") return 2;
-#                              if (x == "Sanitait water") return 3;
-#                              return 0;
+    on_value:
+      then:
+        - lvgl.dropdown.update: 
+            id: lv_hp_request
+            selected_index: !lambda |-
+                              if (x == "Idle") return 0;
+                              if (x == "Zwembad") return 1;
+                              if (x == "Vloerverwarming") return 2;
+                              if (x == "Sanitait water") return 3;
+                              return 0;
 
 # -----------------------------------------------------------------------------
 # Binary Sensors
@@ -1011,19 +1011,23 @@ lvgl:
                         id: lv_hp_request
                         x: 120
                         y: 0
+                        width: 155
                         pad_all: 5
                         options:
                           - "Idle"
                           - "Zwembad"
                           - "Vloerverwarming"
                           - "Sanitair water"
-                        on_value:
+                        on_state_change:
                           then:
                             - select.set:
                                 id: request_heatpipes
                                 option: !lambda |-
-                                  return x.c_str();
-
+                                  if (x == 0) return "Idle";
+                                  if (x == 1) return "Zwembad";
+                                  if (x == 2) return "Vloerverwarming";
+                                  if (x == 3) return "Sanitair water";
+                                  return "Idle";
         - obj:
             id: lv_obj_hp_title
             x: 0
