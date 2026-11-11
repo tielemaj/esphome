@@ -275,14 +275,14 @@ sensor:
 
   - platform: homeassistant
     id: power_grid
-    entity_id: sensor.heatingcontroller_temperatureheatpipes
+    entity_id: sensor.electricityusage
     on_value:
       then:
         - lvgl.label.update: 
             id: lv_el_grid_power
             text:
               format: "%.1f kW"
-              args: [ 'x / 1000' ]
+              args: [ 'x' ]
   - platform: homeassistant
     id: power_solar
     entity_id: sensor.total_solar_power
