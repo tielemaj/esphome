@@ -415,7 +415,7 @@ display:
     dc_pin: GPIO4
     cs_pin: GPIO5
     reset_pin: GPIO22
-    data_rate: 40MHz
+#    data_rate: 40MHz
     
 # -----------------------------------------------------------------------------
 # Touchscreen
@@ -466,8 +466,8 @@ ble_client:
 lvgl:
   id: lvgl_id
   rotation: 90
-  update_interval: 30ms
-  buffer_size: 20%
+#  update_interval: 30ms
+#  buffer_size: 20%
   on_idle:
     timeout: !lambda "return (id(display_timeout).state * 1000);"
     then:
