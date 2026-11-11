@@ -465,7 +465,9 @@ ble_client:
 # -----------------------------------------------------------------------------
 lvgl:
   id: lvgl_id
-  rotation: 90  # <-- Place rotation here
+  rotation: 90
+  update_interval: 30ms
+  buffer_size: 20%
   on_idle:
     timeout: !lambda "return (id(display_timeout).state * 1000);"
     then:
