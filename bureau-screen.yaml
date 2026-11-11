@@ -513,25 +513,25 @@ lvgl:
                   arc_width: 8
           on_press:
             - lvgl.page.next: 
-      - obj:
-          id: ota_box
-          hidden: true
-          align: center
-          width: 90%
-          height: 120
-          widgets:
-            - label:
-                id: ota_label
-                align: top_mid
-                text: "Updating..."
-            - bar:
-                id: ota_bar
-                align: bottom_mid
-                width: 100%
-                height: 24
-                min_value: 0
-                max_value: 100
-                value: 0
+      # - obj:
+      #     id: ota_box
+      #     hidden: true
+      #     align: center
+      #     width: 90%
+      #     height: 120
+      #     widgets:
+      #       - label:
+      #           id: ota_label
+      #           align: top_mid
+      #           text: "Updating..."
+      #       - bar:
+      #           id: ota_bar
+      #           align: bottom_mid
+      #           width: 100%
+      #           height: 24
+      #           min_value: 0
+      #           max_value: 100
+      #           value: 0
       - buttonmatrix:
           id: top_layer
           x: 0
