@@ -415,7 +415,7 @@ display:
     dc_pin: GPIO4
     cs_pin: GPIO5
     reset_pin: GPIO22
-    data_rate: 80MHz
+    data_rate: 40MHz
     
 # -----------------------------------------------------------------------------
 # Touchscreen
