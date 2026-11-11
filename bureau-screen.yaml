@@ -841,7 +841,7 @@ lvgl:
                         pad_all: 5
                     - label:
                         id: lv_pb_mode
-                        x: 150
+                        x: 120
                         y: 0
                         text: ""
                         pad_all: 5
