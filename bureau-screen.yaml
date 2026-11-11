@@ -343,8 +343,8 @@ select:
             selected_index: !lambda |-
                               if (x == "Idle") return 0;
                               if (x == "Zwembad") return 1;
-                              if (x == "Vloerverwarming") return 2;
-                              if (x == "Sanitair water") return 3;
+                              if (x == "Sanitair water") return 2;
+                              if (x == "Verwarming") return 3;
                               return 0;
 
 # -----------------------------------------------------------------------------
@@ -1019,8 +1019,8 @@ lvgl:
                         options:
                           - "Idle"
                           - "Zwembad"
-                          - "Vloerverwarming"
                           - "Sanitair water"
+                          - "Verwarming"
                         on_state_change:
                           then:
                             - select.set:
@@ -1028,8 +1028,8 @@ lvgl:
                                 option: !lambda |-
                                   if (x == 0) return "Idle";
                                   if (x == 1) return "Zwembad";
-                                  if (x == 2) return "Vloerverwarming";
-                                  if (x == 3) return "Sanitair water";
+                                  if (x == 2) return "Sanitair water";
+                                  if (x == 3) return "Verwarming";
                                   return "Idle";
         - obj:
             id: lv_obj_hp_title
