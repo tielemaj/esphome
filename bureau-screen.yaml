@@ -51,50 +51,50 @@ esphome:
     # - delay: 2s
     # - output.turn_off: buzzer    
   
-ota:
-  - platform: esphome
-    on_begin:
-      - lvgl.widget.show: ota_box
-      - if:
-          condition: 
-            light.is_off: displaybacklight
-          then:
-            - logger.log: "LVGL resuming"
-            - lvgl.resume:
-            - lvgl.widget.redraw:
-            - light.turn_on: displaybacklight
-      - lvgl.label.update:
-          id: ota_label
-          text: "Updating..."
-      - lvgl.bar.update:
-          id: ota_bar
-          value: 0
-      - lambda: id(lvgl_id).loop();
-    on_progress:
-      - lvgl.bar.update:
-          id: ota_bar
-          value: !lambda return x;
-      - lvgl.label.update:
-          id: ota_label
-          text:
-            format: "Updating... %.0f%%"
-            args: [x]
-      - lambda: id(lvgl_id).loop();
-    on_end:
-      - lvgl.bar.update:
-          id: ota_bar
-          value: 100
-      - lvgl.label.update:
-          id: ota_label
-          text: "Update complete, rebooting"
-      - lambda: id(lvgl_id).loop();
-    on_error:
-      - lvgl.label.update:
-          id: ota_label
-          text:
-            format: "Update failed (error %u)"
-            args: [x]
-      - lambda: id(lvgl_id).loop();
+# ota:
+#   - platform: esphome
+#     on_begin:
+#       - lvgl.widget.show: ota_box
+#       - if:
+#           condition: 
+#             light.is_off: displaybacklight
+#           then:
+#             - logger.log: "LVGL resuming"
+#             - lvgl.resume:
+#             - lvgl.widget.redraw:
+#             - light.turn_on: displaybacklight
+#       - lvgl.label.update:
+#           id: ota_label
+#           text: "Updating..."
+#       - lvgl.bar.update:
+#           id: ota_bar
+#           value: 0
+#       - lambda: id(lvgl_id).loop();
+#     on_progress:
+#       - lvgl.bar.update:
+#           id: ota_bar
+#           value: !lambda return x;
+#       - lvgl.label.update:
+#           id: ota_label
+#           text:
+#             format: "Updating... %.0f%%"
+#             args: [x]
+#       - lambda: id(lvgl_id).loop();
+#     on_end:
+#       - lvgl.bar.update:
+#           id: ota_bar
+#           value: 100
+#       - lvgl.label.update:
+#           id: ota_label
+#           text: "Update complete, rebooting"
+#       - lambda: id(lvgl_id).loop();
+#     on_error:
+#       - lvgl.label.update:
+#           id: ota_label
+#           text:
+#             format: "Update failed (error %u)"
+#             args: [x]
+#       - lambda: id(lvgl_id).loop();
 
 # -----------------------------------------------------------------------------
 # Custom Device Configuration
